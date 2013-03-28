@@ -14,13 +14,13 @@
 	<input
 		type="button"
 		value="&nbsp;&lt;&nbsp;"
-		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/1%>&cursor=<%=cid - 1%>';"
+		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/1%>&amp;cursor=<%=cid - 1%>';"
 		<%if not list/1 [prin "disabled"]%>
 	>
 	<input
 		type="button"
 		value="&nbsp;&gt;&nbsp;"
-		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/3%>&cursor=<%=cid + 1%>';"
+		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/3%>&amp;cursor=<%=cid + 1%>';"
 		<%if not list/3 [prin "disabled"]%>
 	>
 	#[Next]

@@ -100,7 +100,7 @@
 			if changed? [update-ticket params]
 			response/redirect rejoin [
 				"ticket.rsp?id=" params/id
-				either params/cursor [join "&cursor=" params/cursor][""]
+				either params/cursor [join "&amp;cursor=" params/cursor][""]
 			]
 		]
 	]
@@ -137,7 +137,7 @@
 	edit?: yes
 	include %navigate-tickets.rsp
 %>
-<script>
+<script type="text/javascript">
 	function MoveSubmit() {
 		var warn = "\n\nWatch out, following fields will be reset:\n    - Category\n    - Version\n    - Fixed In";
 		var res = confirm("<%= join say "Do you really want to move ticket #" params/id%> ?" + warn);
@@ -155,7 +155,7 @@
 	<a href="feed.rsp?tid=<%=id%>"><img src="img/rss.gif" border="0"></a><br>
 </div>
 <div align="center" style="margin-top:10px;">
-	<form method="POST" name="ticket">
+	<form method="POST" name="ticket" action="<%=join request/parsed/url "#comments"%>">
 	<table class="tbl" width="90%">
 		<tr>
 			<th width="120">#[Type]</th>
@@ -266,7 +266,7 @@
 			session/content/user-role = 'admin
 			session/content/user-id = ticket/17
 		][%>
-		<script>
+		<script type="text/javascript">
 			function DeleteSubmit() {
 				var res = confirm("<%= join say "Do you really want to delete ticket #" params/id%> ?");
 				if (res) document.forms.ticket.action.value = 'delete';

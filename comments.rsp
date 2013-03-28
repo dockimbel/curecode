@@ -50,7 +50,7 @@
 					<input type="hidden" name="action" value="edit-cmt">
 				</form>
 				</td><td>
-				<form method="POST">
+				<form method="POST" action="<%=join request/parsed/url "#comments"%>">
 					<input type="submit" value="#[Delete]" class="midsz">
 					<input type="hidden" name="cid" value="<%=id%>">
 					<input type="hidden" name="action" value="del-cmt">
@@ -61,7 +61,7 @@
 		</td>
 		<td valign="top">
 			<%either all [edit-cmt id = params/cid][%>
-			<form method="POST">
+			<form method="POST" action="<%=join request/parsed/url "#comments"%>">
 				<input type="hidden" name="cid" value="<%=id%>">
 				<input type="hidden" name="action" value="upd-cmt">
 				<textarea name="cmt" cols="60" rows="10"><%=cmt%></textarea><br>

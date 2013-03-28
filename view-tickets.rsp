@@ -74,7 +74,7 @@
 	title: say "Tickets List"
 	include %head.rsp 
 %>
-<script>
+<script type="text/javascript">
 	var filters = ['preset-filters', 'search-filters', 'detail-filters'];
 	var fields = ['type', 'severity', 'status', 'hstatus', 'priority', 'results'];
 	
@@ -98,7 +98,7 @@
 <table width="100%">
 	<tr>
 		<td align="left">
-			<form method="POST" id="list">
+			<form method="POST" id="list" action="view-tickets.rsp">
 			<input type="hidden" name="preset" value="<%=any [params/preset ""]%>">
 			<div id="filters">
 				<table id="preset-filters">
@@ -129,7 +129,7 @@
 								<option value="3" <%mark/selected 3 'fields 1%>>#[Description]</option>
 								<option value="4" <%mark/selected 4 'fields 1%>>#[Comments]</option>
 								<option value="5" <%mark/selected 5 'fields 1%>>#[User]</option>
-								<optgroup label="----------"></optgroup>
+								<optgroup label="----------" disabled></optgroup>
 								<option value="6" <%mark/selected 6 'fields 1%>>#[Commented by]</option>
 							</select>
 						</td>
@@ -254,7 +254,7 @@
 			c: (params/page - 1 * params/results) + index? tickets
 		%><tr class="bg<%=ticket/8%>">
 			<td align="center">
-				<a href="<%=pick ["edit-" ""] dev?%>ticket.rsp?id=<%=ticket/1%>&cursor=<%=c%>"><%=zeropad ticket/1 7%></a>
+				<a href="<%=pick ["edit-" ""] dev?%>ticket.rsp?id=<%=ticket/1%>&amp;cursor=<%=c%>"><%=zeropad ticket/1 7%></a>
 			</td>
 			<td align="center"><%=any [all [zero? any [ticket/2 0] "&nbsp;"] ticket/2]%></td>
 			<td align="center"><%=say ticket/3%></td></td>
@@ -287,5 +287,5 @@
 	</div>
 <%]%>
 </div>
-<script>ShowFilters(<%=any [all [params/find 1] all [params/apply 2] 0]%>);</script>
+<script type="text/javascript" >ShowFilters(<%=any [all [params/find 1] all [params/apply 2] 0]%>);</script>
 <%include-file %footer.inc%>

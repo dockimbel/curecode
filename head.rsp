@@ -3,6 +3,7 @@
 <head>
 	<title><%=title%></title>
 	<link href="<%=request/web-app%>/curecode.css" type="text/css" rel="stylesheet">
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
 </head>
 <body>
 <form method="POST" action="<%=request/web-app%>/set-project.rsp" name="selprj">

@@ -101,7 +101,7 @@
 instead of creating a new one. You just need to sign in using the instance name
 of your current account (http://curecode.org/&lt;instance name&gt;).]
 		</div>
-		<form method="POST">
+		<form method="POST" action="register.rsp">
 			<%
 			 import?: params/action = 'identify
 			  if all [err? import?][%>
@@ -140,7 +140,7 @@ of your current account (http://curecode.org/&lt;instance name&gt;).]
 	</div>
 	<div style="float:left;width:45%;">
 		<h2>#[Create a new account]</h2>
-		<form method="POST">
+		<form method="POST" action="register.rsp">
 			<%
 				register?: params/action = 'register
 			  if all [err? register?][%>
@@ -177,7 +177,7 @@ of your current account (http://curecode.org/&lt;instance name&gt;).]
 				<tr>
 					<td colspan="2" align="center">
 					<br>
-					<script>
+					<script type="text/javascript">
 						var RecaptchaOptions = {
 						  theme : 'white',
 						  lang : 'fr'

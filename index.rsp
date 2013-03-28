@@ -99,12 +99,12 @@
 			
 			chart: join chart-url [
 				"chtt=" utf8-encode say "Tickets Overview"
-				"&chs=295x180"
-				"&chd=t:" chart-form/with extract/index list 2 2 #"," total
-				"&chco=ff9700,4e71bc,429120"
-				"&cht=p"
-				"&chp=-1.57"
-				"&chl="  chart-form extract list 2 #"|"
+				"&amp;chs=295x180"
+				"&amp;chd=t:" chart-form/with extract/index list 2 2 #"," total
+				"&amp;chco=ff9700,4e71bc,429120"
+				"&amp;cht=p"
+				"&amp;chp=-1.57"
+				"&amp;chl="  chart-form extract list 2 #"|"
 			]
 			%><img src="<%=chart%>">
 		</td>
@@ -120,15 +120,15 @@
 
 			chart: join chart-url [
 				"chtt=" utf8-encode say "Stockpile (6 months)"
-				"&chs=400x180"
-				"&chd=t:" chart-form stock/2 #","
-				"&chds=0," stock/3
-				"&chxr=0,0," stock/3 #"," stock/4
-				"&chxt=y"
-				"&chbh=50"
-				"&chco=ffc850"
-				"&cht=bvg"
-				"&chl="  chart-form stock/1 #"|"
+				"&amp;chs=400x180"
+				"&amp;chd=t:" chart-form stock/2 #","
+				"&amp;chds=0," stock/3
+				"&amp;chxr=0,0," stock/3 #"," stock/4
+				"&amp;chxt=y"
+				"&amp;chbh=50"
+				"&amp;chco=ffc850"
+				"&amp;cht=bvg"
+				"&amp;chl="  chart-form stock/1 #"|"
 			]
 		%><img src="<%=chart%>">
 		</td>
@@ -138,16 +138,16 @@
 
 			chart: join chart-url [
 				"chtt=" utf8-encode say "Stockpile evolution (6 months)"
-				"&chs=434x180"
-				"&chd=t2:" chart-form stock/2 #","
+				"&amp;chs=434x180"
+				"&amp;chd=t2:" chart-form stock/2 #","
 				"|" chart-form stock/3 #","
-				"&chdl=New|Closed"
-				"&chds=0," stock/4 ",0," stock/4
-				"&chxr=0,0," stock/4 #"," stock/5
-				"&chxt=y"
-				"&chco=ffa0a0,cceedd"
-				"&cht=bvg"
-				"&chl="  chart-form stock/1 #"|"
+				"&amp;chdl=New|Closed"
+				"&amp;chds=0," stock/4 ",0," stock/4
+				"&amp;chxr=0,0," stock/4 #"," stock/5
+				"&amp;chxt=y"
+				"&amp;chco=ffa0a0,cceedd"
+				"&amp;cht=bvg"
+				"&amp;chl="  chart-form stock/1 #"|"
 			]
 		%><img src="<%=chart%>">
 		</td>
@@ -168,12 +168,12 @@
 			
 			chart: join chart-url [
 				"chtt=" utf8-encode say "Open and Waiting By Status"
-				"&chs=268x180"
-				"&chd=t:" data/1
-				"&chco=" data/2
-				"&cht=p"
-				"&chp=-1.57"
-				"&chl=" data/3
+				"&amp;chs=268x180"
+				"&amp;chd=t:" data/1
+				"&amp;chco=" data/2
+				"&amp;cht=p"
+				"&amp;chp=-1.57"
+				"&amp;chl=" data/3
 			]
 			%><img src="<%=chart%>">
 		</td>
@@ -188,12 +188,12 @@
 			
 			chart: join chart-url [
 				"chtt=" utf8-encode say "All by Priority"
-				"&chs=268x180"
-				"&chd=t:" data/1
-				"&chco=" data/2
-				"&cht=p"
-				"&chp=2.356"
-				"&chl=" data/3
+				"&amp;chs=268x180"
+				"&amp;chd=t:" data/1
+				"&amp;chco=" data/2
+				"&amp;cht=p"
+				"&amp;chp=2.356"
+				"&amp;chl=" data/3
 			]
 			%><img src="<%=chart%>">
 		</td>
@@ -208,12 +208,12 @@
 			
 			chart: join chart-url [
 				"chtt=" utf8-encode say "All by Severity"
-				"&chs=268x180"
-				"&chd=t:" data/1
-				"&chco=" data/2
-				"&cht=p"
-				"&chp=2.356"
-				"&chl=" data/3
+				"&amp;chs=268x180"
+				"&amp;chd=t:" data/1
+				"&amp;chco=" data/2
+				"&amp;cht=p"
+				"&amp;chp=2.356"
+				"&amp;chl=" data/3
 			]
 			%><img src="<%=chart%>">
 		</td>
@@ -250,7 +250,7 @@
 </div>
 <div align="center" style="height:400px;">
 	<br>
-	<form method="POST">
+	<form method="POST" action="index.rsp">
 		<%if err? [%>
 		<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
 		<%]%>

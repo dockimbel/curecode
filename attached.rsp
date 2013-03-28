@@ -87,7 +87,7 @@
 			factor = $('#up_progress').css('width');
 			factor = parseInt(factor.slice(0,factor.length - 2)) / 100;
 			token = $.ajax({url: '/upload/get-id', async: false}).responseText;
-			$('#attfrm').attr('action', 'upload.rsp?id=<%=params/id%>&token=' + token);
+			$('#attfrm').attr('action', 'upload.rsp?id=<%=params/id%>&amp;token=' + token);
 			$('.hideable').show();
 			timer = setTimeout(onTimer, 250);
 			ref_time = getMilliSeconds();
@@ -101,7 +101,7 @@
 				drop: function(event, ui) {
 					var name = $('#' + ui.draggable.attr('id') + ' img').attr('title');
 					if (confirm('#[Do you really want to delete file] [' + name + '] ?')) {
-						$.get('remove-file.rsp?id=<%=params/id%>&file=' + ui.draggable.attr('id'));
+						$.get('remove-file.rsp?id=<%=params/id%>&amp;file=' + ui.draggable.attr('id'));
 						ui.draggable.empty();
 						ui.draggable.remove();
 						setTrashcanState();
@@ -115,7 +115,7 @@
 	<table class="cmt">
 		<tr><th colspan="2" align="left"><a name="files">#[Attached Files]</a></th></tr>
 		<tr><%if allow-modify? [%>
-			<form method="POST" id="attfrm" enctype="multipart/form-data" target="fileframe">
+			<form method="POST" id="attfrm" enctype="multipart/form-data" target="fileframe" action="attached.rsp">
 			<%]%>
 			<th align="center" width="120"></th>
 			<td>
@@ -129,7 +129,7 @@
 						file-id: head clear find copy file/2 #"."
 					%>
 					<div class="attached-doc" id="<%=file-id%>">
-						<a href="get-file.rsp?id=<%=file-id%>&file=<%=url-encode/all file/1%>" target="_blank">
+						<a href="get-file.rsp?id=<%=file-id%>&amp;file=<%=url-encode/all file/1%>" target="_blank">
 							<img <%=any [class ""]%> src="<%=small%>" title="<%=html-encode file/1%>">
 						</a>
 					</div>

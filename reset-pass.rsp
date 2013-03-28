@@ -47,7 +47,7 @@
 </div>
 <%][%>
 <div align="center" style="padding-top:40px">
-	<form method="POST">
+	<form method="POST" action="reset-pass.rsp">
 		<%if err? [%>
 		<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
 		<%]%>

@@ -306,10 +306,10 @@ apply-filter: func [spec [block!] /local filter][
 
 recaptcha-verify: func [spec [block!] /local data res][
 	data: rejoin [
-		"privatekey=" 	recaptcha/private-key
-		"&remoteip="	request/client-ip
-		"&challenge="	spec/recaptcha_challenge_field
-		"&response="	spec/recaptcha_response_field
+		"privatekey=" 		recaptcha/private-key
+		"&amp;remoteip="	request/client-ip
+		"&amp;challenge="	spec/recaptcha_challenge_field
+		"&&amp;response="	spec/recaptcha_response_field
 	]
 	res: attempt [
 		read/custom http://api-verify.recaptcha.net/verify reduce ['POST data]

@@ -43,7 +43,7 @@
 			<td><%=any [user/5 ""]%></td>
 		</tr>
 	</table>
-	<form method="POST">
+	<form method="POST" action="profile.rsp">
 	<table style="margin-top:20px;">
 		<tr>
 			<th>#[New Password]</th>
@@ -60,7 +60,7 @@
 		</tr>
 	</table>
 	</form>
-	<form method="POST">
+	<form method="POST" action="profile.rsp">
 		<table style="margin-top:40px;">
 			<tr>
 				<td colspan="2" align="right">
@@ -77,7 +77,7 @@
 <%if not empty? projects: enum-projects/priv [%>
 <div align="center">
 	<h4>#[Private Projects Rights]</h4>
-	<form method="POST">
+	<form method="POST" action="profile.rsp">
 	<table class="tbl" width="300">
 		<tr>
 			<th>#[Private Project Name]</th>

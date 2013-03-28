@@ -125,7 +125,7 @@
 <table width="600" align="center"><tr><td valign="top">
 <div>
 	<h4>#[Versions]</h4>
-	<form method="POST">
+	<form method="POST" action="edit-project.rsp?id=<%=param/id%>">
 	<table class="tbl">
 		<tr>
 			<th>#[Version]</th>
@@ -154,7 +154,7 @@
 </div>
 </td><td valign="top">
 <div>
-	<script>
+	<script type="text/javascript">
 		function SetArgs(dir) {
 			document.forms.catform.action.value='swap';
 			document.forms.catform.dir.value=dir;

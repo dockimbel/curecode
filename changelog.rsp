@@ -19,7 +19,7 @@
 	include %head.rsp
 %>
 <div align="center" style="padding-top:20px;">
-	<form method="POST" id="selver">
+	<form method="POST" id="selver" action="changelog.rsp">
 	#[Fixed tickets in version] : 
 	<%either empty? list-ver: enum-versions [%>
 		n/a
@@ -33,7 +33,7 @@
 	</select>
 	<%]%>
 	</form>
-<%if vid [%>	
+<%if vid [%>
 	<table class="changelog">
 	<tr><th colspan="2" align="left">#[Version] <%=vlabel%></th></tr><%
 	foreach ticket list-fixed-tickets vid [%>
