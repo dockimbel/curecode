@@ -129,7 +129,7 @@
 								<option value="3" <%mark/selected 3 'fields 1%>>#[Description]</option>
 								<option value="4" <%mark/selected 4 'fields 1%>>#[Comments]</option>
 								<option value="5" <%mark/selected 5 'fields 1%>>#[User]</option>
-								<optgroup label="----------" disabled></optgroup>
+								<option disabled>----------</option>
 								<option value="6" <%mark/selected 6 'fields 1%>>#[Commented by]</option>
 							</select>
 						</td>
@@ -219,10 +219,9 @@
 			<a href="javascript:ShowFilters(0);">#[Preset]</a> |
 			<a href="javascript:ShowFilters(1);">#[Search]</a> |
 			<a href="javascript:ShowFilters(2);">#[Detail]</a>
-		</td
+		</td>
 	</tr>
 </table>
-</div>
 <br><br>
 <div id="filter-box">
 <%either empty? tickets [%>
@@ -233,7 +232,7 @@
 	%>
 	<%=count%> <%=say pick ["tickets found" "ticket found"] count > 1%>
 	<div style="position:absolute;top:190px;right:10px;text-align:right;">
-		<a href="feed.rsp?prj=<%=session/content/project-id%>"><img src="img/rss.gif" border="0"></a><br>
+		<a href="feed.rsp?prj=<%=session/content/project-id%>"><img src="img/rss.gif" border="0" alt="rss"></a><br>
 	</div>
 	<table class="tickets">
 		<tr>
@@ -257,7 +256,7 @@
 				<a href="<%=pick ["edit-" ""] dev?%>ticket.rsp?id=<%=ticket/1%>&amp;cursor=<%=c%>"><%=zeropad ticket/1 7%></a>
 			</td>
 			<td align="center"><%=any [all [zero? any [ticket/2 0] "&nbsp;"] ticket/2]%></td>
-			<td align="center"><%=say ticket/3%></td></td>
+			<td align="center"><%=say ticket/3%></td>
 			<td align="center" class="mark-<%= pick ["high" "low"] ticket/9 > 5%>"><%=say ticket/4%></td>
 			<td align="center"><%=say ticket/5%></td>
 			<td align="center"><%=say ticket/10%></td>

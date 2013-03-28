@@ -44,7 +44,7 @@
 </div>
 <%]%>
 <div style="position:absolute;top:132px;right:5%;padding-right:12px;text-align:right;">
-	<a href="feed.rsp?tid=<%=id%>"><img src="img/rss.gif" border="0"></a><br>
+	<a href="feed.rsp?tid=<%=id%>"><img src="img/rss.gif" border="0" alt="rss"></a><br>
 </div>
 <div align="center" style="margin-top:10px;">
 	<table width="90%" class="tbl">
