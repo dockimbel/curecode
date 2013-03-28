@@ -1,0 +1,33 @@
+<% 
+	title: say "Manage Projects"
+	include %../head.rsp
+	page: 'projects
+	include %links.rsp
+%>
+<br>
+<div align="center">
+	<form action="edit-project.rsp">
+		<input type="submit" value="#[Add New Project]"
+	</form>
+	<% if not empty? list: enum-projects/full [%>
+	<br><br>
+	<table class="tbl">
+		<tr>
+			<th width="40" class="center">#[ID]</th>
+			<th>#[Name]</th>
+			<th>#[Private]</th>
+			<th>#[Description]</th>
+		</tr><%foreach [id name desc priv? count] list [%>
+		<tr>
+			<td class="center"><%=id%></td>
+			<td>
+				<a href="edit-project.rsp?id=<%=id%>"><%=name%></a>
+			</td>
+			<td class="center"><%=pick ["yes" "no"] to-logic priv?%></td>
+			<td><%=html-encode any [desc ""]%></td>
+		</tr>
+		<%]%>
+	</table>
+	<%]%>
+</div>
+<%include-file %../footer.inc%>

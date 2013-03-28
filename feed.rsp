@@ -1,0 +1,49 @@
+<%
+	validate/full [
+		prj	integer! -
+		tid integer! -
+	]
+	prj-id: 	any [prj?: request/content/prj 1]
+	ticket-id:  request/content/tid
+	host: request/parsed/headers/host
+	
+%><?xml version="1.0"?>
+<rss version="2.0">
+<channel><%
+	either prj? [
+		list: select-logs prj-id%>
+	<title>CureCode project: <%=either prj-id = 1 [say "All Projects"][select enum-projects prj-id]%></title>
+	<link>http://<%=host%><%=request/web-app%>/view-tickets.rsp</link>
+	<description>Project's changes tracking</description>
+	<ttl>300</ttl>
+	<%][
+		list: select-logs/ticket ticket-id%>
+	<title>CureCode ticket #<%=ticket-id%></title>
+	<link>http://<%=host%><%=request/web-app%>/tickets.rsp?id=<%=ticket-id%></link>
+	<description>Ticket #<%=ticket-id%> changes tracking</description>
+	<ttl>3600</ttl>
+	<%]%>	
+	<language>en-us</language>
+	<copyright>Nenad Rakocevic 2008-2011</copyright>
+	<generator>CureCode</generator>
+	<%foreach [id ticket date user action field opt-id old new msg] list [%>
+	<item>
+		<title><%if prj? [%>#<%=ticket%>: <%]%><%=utf8-encode history/decode field%> <%=utf8-encode history/decode action%> by <%=user%></title>
+		<link>http://<%=host%><%=request/web-app%>/ticket.rsp?id=<%=ticket%></link>
+		<author>CureCode</author>
+		<guid>http://<%=host%><%=request/web-app%>/ticket.rsp?id=<%=ticket%></guid>
+		<pubDate><%=to-idate date%></pubDate>
+		<description><![CDATA[<%=
+			utf8-encode either all [old new] [
+				reform [
+					any [all [old history/decode/value field old] ""]
+					"=>" history/decode/value field new
+				]
+			][
+				any [msg "-"]
+			]
+		%>]]></description>
+	</item>
+	<%]%>
+</channel>
+</rss><%response/set-header 'Content-Type "application/rss+xml"%>

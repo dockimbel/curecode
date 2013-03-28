@@ -1,0 +1,14 @@
+<%
+	if all [
+		validate/full [
+			prj-id	integer!	*
+			ref		-			*
+		]
+		access-project? request/content/prj-id session/content/user-id
+	][
+		response/redirect request/web-app
+	]
+	session/content/project-id: request/content/prj-id
+	response/redirect dehex request/content/ref
+	;response/forward dehex request/content/ref
+%>

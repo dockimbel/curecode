@@ -1,0 +1,31 @@
+<%
+	last-page: ceil count / params/results
+%>
+<br>
+<center>
+	<input 
+		type="button"
+		value="&lt;&lt;"
+		onclick="f=document.getElementById('list');f.action.value='navigate';f.page.value='<%=1%>';f.submit();"
+		<%if params/page < 3 [prin "disabled"]%>
+	>
+	<input
+		type="button"
+		value="&nbsp;&lt;&nbsp;"
+		onclick="f=document.getElementById('list');f.action.value='navigate';f.page.value='<%=params/page - 1%>';f.submit();"
+		<%if params/page = 1 [prin "disabled"]%>
+	>
+	<%=params/page%> / <%=last-page: ceil count / params/results%>
+	<input
+		type="button"
+		value="&nbsp;&gt;&nbsp;"
+		onclick="f=document.getElementById('list');f.action.value='navigate';f.page.value='<%=params/page + 1%>';f.submit();"
+		<%if params/page = last-page [prin "disabled"]%>
+	>
+	<input
+		type="button"
+		value="&gt;&gt;"
+		onclick="f=document.getElementById('list');f.action.value='navigate';f.page.value='<%=last-page%>';f.submit();"
+		<%if params/page > (last-page - 2) [prin "disabled"]%>
+	>
+</center>

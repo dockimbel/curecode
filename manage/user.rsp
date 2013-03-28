@@ -1,0 +1,135 @@
+<% 
+	if validate/full [id integer! *][
+		response/redirect "users.rsp"
+	]
+	user-id: request/content/id
+	user-url: join "user.rsp?id=" user-id
+	used-list: make block! 1
+	validate [action word!]
+	
+	switch request/content/action [
+		Add		[
+			if none? validate/full [
+				prj		integer!	*
+				role	integer!	*
+			][
+				add-right request/content
+				response/redirect user-url
+			]
+		]
+		Remove	[
+			if none? validate/full [rid	integer! *][
+				remove-right request/content/rid
+				response/redirect user-url
+			]
+		]
+		user-change	[
+			if none? validate/full [urole integer! *][
+				change-user-role request/content
+			]
+		]
+		user-delete [
+			delete-user user-id
+			response/redirect "users.rsp"
+		]
+	]
+	
+	user: get-user user-id
+	
+	title: say "Manage Users"
+	include %../head.rsp
+	page: none
+	include %links.rsp
+%>
+<script language="javascript">
+	function SetRole(uid, role) {
+		document.forms.profile.action.value = 'user-change';
+		document.forms.profile.submit();
+	}
+</script>
+<br><br>
+<div align="center">
+	<form method="POST" name="profile">
+	<table class="tbl">
+		<tr>
+			<th>#[Login ID]</th>
+			<td><%=any [user/1 ""]%></td>
+		</tr><tr>
+			<th>#[Email]</th>
+			<td><%=any [user/2 ""]%></td>
+		</tr>
+		<tr>
+			<th>#[Role]</th>
+			<td>
+				<%either user-id = 1 [%>#[Admin]<%][%>
+				<select name= "urole" onchange="SetRole(<%=user-id%>,this.value);"><%foreach [id role] enum-roles [%>
+					<option value="<%=id%>"<%if id = user/7 [%> selected<%]%>><%=say role%></option>		
+					<%]%></select>
+				<%]%>
+			</td>
+		</tr>
+		<tr>
+			<th>#[Creation Date]</th>
+			<td><%=any [user/5 ""]%></td>
+		</tr>
+	</table>
+	<input type="hidden" name="action" value="user-delete">
+	<br><br>
+	<%if user-id > 1 [%>
+	<input type="submit" value="Delete User" onclick="return confirm('Do you really want to delete this user?');">
+	<%]%>
+	</form>
+	<br>
+</div>
+<br>
+<%if all [
+	'admin <> to word! user/4
+	not empty? projects: enum-projects/priv 
+][%>
+<div align="center">
+	<h4>#[Private Projects Rights]</h4>
+	<form method="POST">
+	<table class="tbl">
+		<tr>
+			<th>#[Project Name]</th>
+			<th>#[User Role]</th>
+			<th>#[Action]</th>
+		</tr>
+		<% if not empty? list: get-rights user-id [
+			foreach right list [
+				append used-list right/2
+			%>
+		<tr>
+			<td><%=any [right/3 ""]%></td>
+			<td><%=say any [right/4 ""]%></td>
+			<td>	
+				<a href="user.rsp?id=<%=user-id%>&rid=<%=right/1%>&action=remove">[#[Remove]]</a>
+			</td>
+		</tr>
+			<%]
+		  ]
+		  
+		unused: difference used-list extract projects 1
+		remove-each [id prj] projects [not find unused id]
+		if not empty? projects [
+		%>
+		<tr>
+			<td>
+				<select name="prj"><%foreach [id prj] projects [%>
+					<option value="<%=id%>"><%=prj%></option>
+				<%]%></select>
+			</td><td>
+				<select name="role"><%foreach [id role] enum-roles [%>
+					<option value="<%=id%>"><%=say role%></option>		
+				<%]%></select>
+			</td><td>
+				<input type="submit" value="#[Add]">
+				<input type="hidden" name="action" value="add">
+			</td>
+		</tr>
+		<%]%>
+	</table>
+	</form>
+</div>
+<%]%>
+<%include-file %../footer.inc%>

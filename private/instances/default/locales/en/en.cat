@@ -1,0 +1,344 @@
+;
+; CureCode Locale translations
+;
+; Language: english
+; Author: Nenad Rakocevic / Softinnov
+; Date: 25-Jun-2007
+
+;====== RSP labels ======
+
+;--- Head ---
+
+"User ID"
+"anonymous"
+"Main"
+"Login"
+"View Tickets"
+"Tickets List"
+"Add Ticket"
+"Change Log"
+"Manage"
+"Profile"
+"Logout"
+"All Projects"
+
+;--- Main ---
+
+"Project"
+"Virtual project for global view"
+"Description"
+"Visibility"
+"External link"
+
+"Total"
+"ticket(s)"
+"Stockpile (6 months)"
+"Stockpile evolution (6 months)"
+"By Status"
+"By Priority"
+"By Severity"
+
+"Register a new account"
+"Reset your password"
+"Error: Missing fields or incorrect values"
+"Error"
+"User ID"
+"Password"
+
+;--- Register ---
+
+"Both passwords don't match"
+"This Login ID already exists, please choose another"
+"Invalid email address"
+"Wrong Captcha code, please try again"
+"Register new account"
+"Your account has been created."
+"An email has been sent with an activation URL."
+"Once activated, you can freely log in here."
+"Login"
+"Email"
+"Confirm Password"
+"Code"
+"Type the code your read in the following image"
+"Register"
+"Import an exiting account"
+"If you already have a Curecode account, you can import your account^/instead of creating a new one. You just need to sign in using the instance name^/of your current account (http://curecode.org/&lt;instance name&gt;)."
+"Instance name"
+"Import & Login"
+"Create a new account"
+"Unknown instance name"
+
+
+;--- Reset-password ---
+
+"Reset your Password"
+"These Login/Email don't match"
+"An email has been sent with an confirmation URL"
+"Once activated, you can freely log in here with your new password"
+"Reset Password"
+
+;--- Reset ---
+
+"Password reset"
+"Error: your confirmation URL is wrong. Try again or contact the webmaster."
+"Password reset to default"
+"Please now"
+"sign in"
+"and change the default password in your Profile menu."
+
+;--- View Tickets ---
+	
+"Filters Type"
+"Preset"
+"Search"
+"Detail"
+
+"My Reports"
+"Most Recent Reports"
+"Unreviewed Submissions"
+"Active Priorities"
+"Tested"
+"Recent Changes"
+"Worst Severity"
+"By Submitter"
+"Completed"
+
+"Filter"
+"Keyword(s)"
+"Fields"
+"Ticket ID"
+"or"
+"All"
+"Find"
+"Reset"
+"Commented by"
+
+"Type"
+"Severity"
+"Status"
+"Hide status"
+"Priority"
+"Results"
+"any"
+"none"
+
+"Apply"
+"No ticket found"
+"#"
+"User"
+"Updated"
+"Summary"
+"tickets found"
+"ticket found"
+
+;-- Edit Ticket --
+
+"Update Ticket"
+"Delete Ticket"
+
+;--- Ticket ---
+
+"Submitted by"
+"Version"
+"Platform"
+"Date"
+"Reproducibility"
+"Last Update"
+"Category"
+"Assigned to"
+"Resolution"
+"Fixed in"
+"Example code"
+"Edit Ticket"
+
+;--- Tickets Navigation
+
+"Previous"
+"Next"
+"Short URL"
+
+;--- Attached files ---
+
+"Attached Files"
+"Select..."
+"Attach"
+"Drop a document here to delete it"
+"at"
+"Do you really want to delete file"
+"B/s"
+"KB/s"
+"MB/s"
+
+;--- Comments ---
+
+"Comments"
+"Edit"
+"Delete"
+"Update"
+"Add New"
+
+;--- History ---
+
+"Action"
+"Field"
+"Change"
+"Added"
+"Removed"
+"Modified"
+"Reproduce"
+"Fixedin"
+"Comment"
+"Ticket"
+
+;--- Changelog ---
+
+"Fixed tickets in version"
+
+;--- Add Ticket ---
+
+"Add new ticket"
+"Please choose a project first!"
+"Submit Ticket"
+
+;--- Ack Ticket ---
+
+"Ticket Created"
+"New Ticket created with ID #"
+
+;--- Profile ---
+
+"Your Profile"
+"Role"
+"Creation Date"
+"New Password"
+"Confirmation"
+"Password changed!"
+"Private Projects Rights"
+"Private Project Name"
+"Your Role"
+"no rights granted"
+"Change"
+"Default project and filters saved!"
+"Set current project and filters as default"
+
+;--- Validate ---
+
+"Account Activation"
+"Error: your activation URL is wrong. Try again or contact the webmaster."
+"Activation done."
+"Welcome"
+", you can now use this account to"
+
+;--- Manage ---
+
+"Projects"
+"Users"
+
+;--- Projects ---
+
+"Manage Projects"
+"Add New Project"
+"Name"
+"Private"
+
+;--- Edit Project ---
+
+"Add Project"
+"Edit Project"
+"Project ID"
+"Add"
+"Save"
+"Versions"
+"Action"
+"Remove"
+"Categories"
+"Up"
+"Down"
+
+;--- Users ---
+
+"Manage Users"
+"Activation"
+"Created"
+
+;--- User ---
+
+"Project Name"
+"User Role"
+
+
+;====== Database labels ======
+
+;--- Types ---
+
+"Bug"
+"Wish"
+"Issue"
+"Note"
+"Nuts"
+
+;--- Severity ---
+
+"not a bug"
+"trivial"
+"text"
+"tweak"
+"minor"
+"major"
+"crash"
+"block"
+
+;--- Status ---
+
+"submitted"
+"reviewed"
+"problem"
+"waiting"
+"deferred"
+"dismissed"
+"pending"
+"built"
+"tested"
+"complete"
+
+;--- Priority ---
+	
+"none"
+"low"
+"normal"
+"high"
+"urgent"
+"immediate"
+
+;--- Resolutions ---
+
+"open"
+"fixed"
+"reopened"
+"unable to reproduce"
+"not fixable"
+"duplicate"
+"no change required"
+"suspended"
+"won\'t fix"
+
+;--- Reproduce ---
+
+"Always"
+"Sometimes"
+"Random"
+"Have not tried"
+"Unable to reproduce"
+"Not applicable"
+
+;--- Role ---
+
+"Viewer"
+"Reporter"
+"Developer"
+"Admin"
+
+;====== Email subjects ======
+
+"Account activation"
+"Password reset confirmation"

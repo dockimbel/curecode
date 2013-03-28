@@ -1,0 +1,203 @@
+<%
+	session/end
+	
+	if not value? 'api-ctx [
+		api-ctx: context [
+			
+			ticket!: context [
+				summary:
+				description:
+				code:
+				version:
+				severity:
+				status:
+				resolution:
+				priority:
+				type:
+				platform:
+				created:
+				modified:
+				user:
+				category:
+				reproduce:
+		    	fixed-in: 
+		    	project: 
+		    	comments:
+		    	history: none
+			]
+			
+			query!: [
+				preset		"search"
+				filter		1
+				text		#[none]
+				fields		1
+				tid			#[none]
+				type		0
+				severity	0
+				user		0
+				status		0
+				hstatus		0
+				priority	0
+				results		99999
+				action		search
+				page		1
+				orderby 	1
+				version		#[none]
+				fixedin		#[none]
+				cat			#[none]
+				resolv		#[none]
+				find		#[none]
+				apply		#[none]
+			]
+			
+			set 'send-error send-error: func [msg][
+				%>[error <%=mold msg%>]<%
+				response/end
+			]
+			
+			set 'send-ok send-ok: func [data /ticket][
+				%>[ok <%=mold/all data%>]<%
+			]
+			
+			send-xml-ok: func [data /ticket][
+				%><xml...><%
+			]
+;-- add utf-8 encoding			
+			send-json-ok: func [data /ticket][		
+				%>{'status':0, 'list':[<% foreach row data [%>
+					{'id':'<%=row/1%>','type':'<%=row/3%>','severity':'<%=row/4%>','status':'<%=row/5%>','date':'<%=form row/6/date%> <%=form-time row/6/time%>','summary':'<%=js-encode row/7%>'},
+					<%]
+					remove find/reverse tail response/buffer #","
+					%>]
+				}<%
+				export-json
+			]
+			
+			send-json-error: func [data][
+				%><xml...><%
+			]
+		]
+	]
+
+	either all [
+		none? validate [format word!]
+		request/content/format
+	][
+		switch request/content/format [
+			JSON [
+				set 'send-ok 	get in api-ctx 'send-json-ok
+				set 'send-error get in api-ctx 'send-json-error
+			]
+			XML [
+				;-- not supported yet
+			]
+		]
+	][
+		set 'send-ok 	get in api-ctx 'send-ok
+		set 'send-error get in api-ctx 'send-error
+	]
+	if validate/full [type word! *][send-error "TYPE argument not found or invalid"]
+	
+	switch request/content/type [
+		ticket [
+			if any [
+				validate/full [id integer! *]
+				not positive? request/content/id 
+			][
+				send-error "ID argument not found or invalid"
+			]
+			validate [show	word!]
+			params: request/content
+			
+			data: get-ticket params/id
+			remove/part at data 16 4
+			
+			ticket: make api-ctx/ticket! []
+			set next bind first ticket ticket data
+			
+			if ticket/fixed-in == 0 [ticket/fixed-in: none]
+			if find [comments all] params/show [ticket/comments: list-comments/no-flat params/id]
+			if find [history all]  params/show [
+				out: make block! 8
+				foreach [date user action field opt-id old new msg] list-logs params/id [
+					append/only out new-line/all reduce [
+						date
+						user
+						reform [
+							history/decode field
+							any [all [opt-id join ": " zeropad opt-id 7] ""]
+						]
+						history/decode action
+						either all [old new] [
+							reform [
+								any [all [old history/decode/value field old] ""]
+								"=>" history/decode/value field new
+							]
+						][
+							any [msg "-"]
+						]
+					] off
+				]
+				ticket/history: new-line/all out on
+			]
+			
+			send-ok new-line/all/skip third ticket on 2
+		]
+		
+		list [
+			if any [
+				validate/full [filter integer! *]
+				request/content/filter < 2
+				request/content/filter > 9
+			][
+				send-error "FILTER argument not found or invalid"
+			]
+			invalid: validate [
+				range	pair!
+				mode	word!
+			]
+			params: request/content
+			if params/range [params/range/1: params/range/1 - 1]
+			
+			if any [
+				all [invalid find invalid 'range]
+				all [params/range params/range/1 > params/range/2]
+			][
+				send-error "RANGE argument is invalid"
+			]
+			if any [
+				all [invalid find invalid 'range]
+				all [params/mode not find [count brief] params/mode]
+			][
+				send-error "MODE argument is invalid"
+			]
+			
+			qry: api-ctx/query!
+			qry/filter: params/filter
+			qry/results: either params/range [
+				params/range/2 - params/range/1
+			][
+				99999
+			]
+			
+			send-ok switch/default params/mode [
+				count [
+					to-integer first first select-tickets/count qry
+				]
+				brief [
+					either params/range [
+						select-tickets/range qry params/range/1 params/range/2
+					][
+						select-tickets qry
+					]
+				]
+			][
+				either params/range [
+					select-tickets/range/id-only qry params/range/1 params/range/2
+				][
+					select-tickets/id-only qry
+				]
+			]
+		]
+	]
+%>

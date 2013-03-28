@@ -1,0 +1,343 @@
+;
+; CureCode Locale translations
+;
+; Language: french
+; Author: Nenad Rakocevic / Softinnov
+; Date: 25-Jun-2007
+
+;====== RSP labels ======
+
+;--- Head ---
+
+"Utilisateur"
+"anonyme"
+"Accueil"
+"Connexion"
+"Voir Tickets"
+"Liste des Tickets"
+"Ajouter Ticket"
+"Résolutions"
+"Gestion"
+"Profil"
+"Déconnexion"
+"tous"
+
+;--- Main ---
+
+"Projet"
+"Projet virtuel permettant une vue globale"
+"Description"
+"Visibilité"
+"Lien externe"
+
+"Total"
+"ticket(s)"
+"Stock (6 mois)"
+"Evolution du stock (6 mois)"
+"Par Statut"
+"Par Priorité"
+"Par Sévérité"
+
+"Créer votre compte"
+"Changer votre mot de passe"
+"Erreur: champs incomplets ou valeurs incorrectes"
+"Erreur"
+"Identifiant"
+"Mot de passe"
+
+;--- Register ---
+
+"Les mots de passe ne correspondent pas"
+"Cet identifiant existe déjà, choisissez-en un autre"
+"Adresse email invalide"
+"texte ReCaptcha erroné, essayez à nouveau"
+"Nouvelle inscription"
+"Votre compte a bien été créé."
+"Un email vous a été envoyé contenant l'URL d'activation."
+"Une fois votre compte activé, vous pourrez vous connecter."
+"Identifiant"
+"Email"
+"Confirmation"
+"Code"
+"Inscrivez le code que vous lisez dans l'image ci-dessous"
+"Enregistrement"
+"Importer un compte existant"
+"Si vous disposez déjà d'un compte CureCode, vous pouvez importer votre compte au lieu d'en créer un nouveau. Il vous suffit de vous connecter en précisant le nom de l'instance de votre compte actuel (http://curecode.org/&lt;nom de l'instance&gt;)."
+"Nom de l'instance"
+"Importer et Connecter"
+"Créer un nouveau compte"
+"Nom d'instance inconnu"
+
+;--- Reset-password ---
+
+"Réinitialiser votre mot de passe"
+"Le couple Identifiant/Email est inconnu"
+"Un email vous a été envoyé avec une URL de confirmation"
+"Une fois cette URL activée, vous pouvez vous connecter à nouveau avec votre nouveau mot de passe"
+"Réinitialisation"
+
+;--- Reset ---
+
+"Réinitialisation du mot de passe"
+"Erreur: votre URL de confirmation est erronée. Essayez à nouveau ou contactez le webmaster."
+"Nouveau mot de passe"
+"Veuillez vous"
+"identifier"
+"et choisir un nouveau mot de passe dans votre page Profil."
+
+;--- View Tickets ---
+
+"Type de Filtre"
+"Prédéfini"
+"Recherche"
+"Détaillé"
+
+"Mes tickets"
+"Les plus récents"
+"Nouveaux tickets"
+"Les plus prioritaires"
+"Tickets testés"
+"Récemments modifiés"
+"Les plus graves"
+"Par utilisateur"
+"Terminés"
+
+"Filtre"
+"Mot(s) clé(s)"
+"Champs"
+"N°Ticket"
+"ou"
+"Tous"
+"Trouver"
+"RAZ"
+"Commenté par"
+
+"Type"
+"Sévérité"
+"Statut"
+"Masquer"
+"Priorité"
+"Résultats"
+"tous"
+"aucun"
+
+"Appliquer"
+"Aucun ticket trouvé"
+"#"
+"Créé par"
+"Mis à jour"
+"Résumé"
+"tickets trouvés"
+"ticket trouvé"
+
+;-- Edit Ticket --
+
+"Mise à jour Ticket"
+"Supprimer Ticket"
+
+;--- Ticket ---
+
+"Emis par"
+"Version"
+"Système"
+"Date"
+"Reproductibilité"
+"Mis à jour"
+"Catégorie"
+"Affecté à"
+"Résolution"
+"Résolu en"
+"Exemple de code"
+"Edition Ticket"
+
+;--- Tickets Navigation
+
+"Précédent"
+"Suivant"
+"URL courte"
+
+;--- Attached files ---
+
+"Pièces jointes"
+"Choisir..."
+"Joindre"
+"Lacher une pièce jointe ici pour la supprimer"
+"à"
+"Comfirmer-vous la suppression du fichier"
+"o/s"
+"Ko/s"
+"Mo/s"
+
+;--- Comments ---
+
+"Commentaires"
+"Editer"
+"Supprimer"
+"Enregistrer"
+"Nouveau"
+
+;--- History ---
+
+"Action"
+"Champ"
+"Changement"
+"Ajouté"
+"Supprimé"
+"Modifié"
+"Reproduction"
+"Résolu en"
+"Commentaire"
+"Ticket"
+
+;--- Changelog ---
+
+"Tickets résolus en version"
+
+;--- Add Ticket ---
+
+"Ajouter un ticket"
+"Vous devez d'abord séléctionner un projet!"
+"Enregistrer"		
+
+;--- Ack Ticket ---
+
+"Ticket Créé"
+"Nouveau ticket créé sous la référence : "
+
+;--- Profile ---
+
+"Votre profil"
+"Rôle"
+"Date de création"
+"Nouveau mot de passe"
+"Confirmation"
+"Mot de passe changé!"
+"Droits sur Projets Privés"
+"Nom du Projet Privé"
+"Votre rôle"
+"Aucuns droits accordés"
+"Changer"
+"Projet et filtre actuels enregistrés!"
+"Utiliser le projet et filtre actuels par defaut"
+
+;--- Validate ---
+
+"Validation de l'inscription"
+"Erreur: votre URL de validation est erronée. Essayez à nouveau ou contactez le webmaster."
+"Validation terminée."
+"Bienvenue"
+", vous pouvez maintenant utiliser ce compte pour vous"
+
+;--- Manage ---
+
+"Projets"
+"Utilisateurs"
+
+;--- Projects ---
+
+"Gestion des Projets"
+"Créer un Projet"
+"Nom"
+"Privé"
+
+;--- Edit Project ---
+
+"Créer un Projet"
+"Editer un Projet"
+"Identifiant Projet"
+"Ajouter"
+"Enregistrer"
+"Versions"
+"Action"
+"Supprimer"
+"Catégories"
+"Haut"
+"Bas"
+
+;--- Users ---
+
+"Gestion des Utilisateurs"
+"Validation"
+"Créé le"
+
+;--- User ---
+
+"Nom du Projet"
+"Rôle Utilisateur"
+
+
+;====== Database labels ======
+
+;--- Types ---
+
+"anomalie"
+"souhait"
+"problème"
+"note"
+"nuts"
+
+;--- Severity ---
+
+"pas une anomalie"
+"simple"
+"texte"
+"cosmétique"
+"mineur"
+"majeur"
+"crash"
+"bloquant"
+
+;--- Status ---
+
+"nouveau"
+"examiné"
+"problème"
+"en attente"
+"différé"
+"rejeté"
+"affecté"
+"réalisé"
+"testé"
+"fermé"
+
+;--- Priority ---
+	
+"aucune"
+"basse"
+"normale"
+"haute"
+"urgente"
+"immédiate"
+
+;--- Resolutions ---
+
+"ouvert"
+"résolu"
+"réouvert"
+"non reproductible"
+"impossible à corriger"
+"doublon"
+"pas de modification"
+"suspendu"
+"ne sera pas résolu"
+
+;--- Reproduce ---
+
+"toujours"
+"parfois"
+"aléatoire"
+"non testé"
+"non reproductible"
+"non applicable"
+
+;--- Role ---
+
+"Visiteur"
+"Rédacteur"
+"Developpeur"
+"Admin"
+
+;====== Email subjects ======
+
+"Activation de votre compte"
+"Confirmation de remise à zéro du mot de passe"

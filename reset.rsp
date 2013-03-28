@@ -1,0 +1,24 @@
+<%
+	err?: no
+	either validate/full [
+		id 	-	*
+		key -	*
+	][
+		err?: yes
+	][
+		either validate-user request/content [
+			reset-pass request/content
+		][err?: yes]
+	]
+
+	title: say "Password reset"
+	include %head.rsp 
+%>
+<div align="center">
+<%either err? [%>
+	#[Error: your confirmation URL is wrong. Try again or contact the webmaster.]
+<%][%>
+	#[Password reset to default] : guest<br><br>
+	#[Please now] <a href="index.rsp">#[sign in]</a> #[and change the default password in your Profile menu.]
+<%]%>
+</div>

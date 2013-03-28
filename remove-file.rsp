@@ -1,0 +1,44 @@
+<%
+	alpha: charset [#"a" - #"z"]
+	
+	if any [
+		validate/full [
+			id	 integer! *
+			file -		*
+		]
+		all [
+			positive? request/content/id
+			empty? ticket: get-raw-ticket request/content/id
+		]
+		not parse file: request/content/file [some alpha]
+	][
+		response/redirect "view-tickets.rsp"
+	]
+	params: request/content
+	
+	if any [
+		all [
+			positive? params/id
+			session/content/user-role = 'reporter
+			session/content/user-id <> ticket/17	; ticket's owner allowed to edit
+		]
+		all [
+			positive? params/id
+			session/content/user-role = 'reporter
+			session/content/user-id = ticket/17		; ticket's owner is current user
+			ticket/10 = 6							; dismissed ticket can't be edited by owner (Reporter)
+		]
+	][
+		deny-access
+	]
+	file: to file! join file %.att
+	
+	either negative? params/id [
+		remove-each f any [session/content/files []][f/2 = file]	
+	][
+		remove-file params/id file
+	]
+	target: join file %-small.png
+	attempt [rename join %public/files/ target join target %.deleted]
+	attempt [rename join %public/files/ file join file %.deleted]
+%>

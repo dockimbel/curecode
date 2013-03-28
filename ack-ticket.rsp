@@ -1,0 +1,16 @@
+<% 
+	title: say "Ticket Created"
+	include %head.rsp 
+%>
+<br><br>
+<div align="center">
+	#[New Ticket created with ID #]
+	<b><a href="<%=
+		rejoin [
+			request/web-app
+			"/ticket.rsp?id="
+			request/content/id
+		]
+	%>"><%=request/content/id%></a></b>
+</div>
+<%include-file %footer.inc%>

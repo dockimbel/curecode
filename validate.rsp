@@ -1,0 +1,23 @@
+<%
+	err?: no
+	either validate/full [
+		id 	-	*
+		key -	*
+	][
+		err?: yes
+	][
+		if not validate-user/update request/content [err?: yes]
+	]
+
+	title: say "Account Activation"
+	include %head.rsp 
+%>
+<br><br>
+<div align="center">
+<%either err? [%>
+	#[Error: your activation URL is wrong. Try again or contact the webmaster.]
+<%][%>
+	#[Activation done.]<br><br>
+	#[Welcome] <%=request/content/id%>#[, you can now use this account to] <a href="index.rsp">#[sign in]</a>.
+<%]%>
+</div>

@@ -1,0 +1,301 @@
+<%
+	if any [
+		validate/full [id integer! *]
+		empty? ticket: get-raw-ticket request/content/id
+	][
+		response/redirect "view-tickets.rsp"
+	]
+	
+	if ticket/2 <> session/content/project-id [		;-- current project <> ticket's project
+		if all [
+			session/content/user-id
+			access-project? ticket/2 session/content/user-id
+		][
+			response/redirect request/web-app
+		]
+		session/content/project-id: ticket/2
+	]
+	params: request/content
+	
+	if all [
+		session/content/user-role = 'reporter
+		session/content/user-id <> ticket/17	; ticket's owner allowed to edit
+		ticket/10 <> 6							; dismissed ticket can't be edited by owner (Reporter)
+	][
+		deny-access
+	]
+	
+	sync-vars: [
+		summary	  	3
+		description 4
+		code	  	5
+		version	  	6
+		fixedin	    7
+		category 	8
+		severity  	9
+		status	  	10
+;		resolution 	11
+		priority  	12
+;		reproduce 	13
+		type		14
+		platform	15
+	]
+
+	invalid: validate/full [
+		status		integer!	*
+		severity	integer!	*
+		priority	integer!	*
+		version		integer!	-
+		fixedin		integer!	-
+		category	integer!	-
+;		reproduce	integer!	*
+		type		integer!	*
+		platform	integer!	*
+;		resolution	integer!	*
+		summary		-			*
+		description	-			*
+		code		-			-
+		project		integer!	-
+		cursor		integer!	-
+		action		word!		-
+	]
+	err?: no
+	if params/action = 'save [
+		either invalid [
+			err?: yes
+		][
+			;--- Clean up CR chars from IE
+			if params/description [remove-each c params/description [c = #"^M"]]
+			if params/code [remove-each c params/code [c = #"^M"]]
+			
+			;--- Log changes
+			changed?: no
+			foreach [var id] sync-vars [
+				if not ticket/:id == value: params/:var [
+					changed?: yes
+					case [
+						id = 3 [
+							add-log/msg first ticket 'modified var reform [
+								ticket/:id "=>" value
+							]
+						]
+						any [id = 4 id = 5][
+							add-log first ticket 'modified var
+						]
+						id <= 8 [
+							list: either id = 8 [enum-categories][enum-versions]
+							add-log/msg first ticket 'modified var reform [
+								any [all [ticket/:id select list ticket/:id] ""]
+								"=>" select list value
+							]
+						]
+						id > 8 [
+							add-log/old/new first ticket 'modified var ticket/:id value
+							if all [id = 10 ticket/:id <> value][update-closed-date params value ]
+						]
+					]
+				]
+			]
+			;--- Save changes
+			if changed? [update-ticket params]
+			response/redirect rejoin [
+				"ticket.rsp?id=" params/id
+				either params/cursor [join "&cursor=" params/cursor][""]
+			]
+		]
+	]
+	if all [
+		params/action = 'delete 
+		any [
+			find [admin developer] session/content/user-role
+			all [												;-- fix for R3#1371
+				session/content/user-id = ticket/17
+				zero? touched-by-others? params/id
+			]
+		]
+	][
+		delete-ticket params/id
+		response/redirect "view-tickets.rsp"
+	]
+	if all [
+		params/action = 'move 
+		any [
+			find [admin developer] session/content/user-role
+			session/content/user-id = ticket/17
+		]
+	][
+		move-ticket ticket params/project
+		response/redirect "view-tickets.rsp"
+	]
+	
+	foreach [var id] sync-vars [
+		if value: params/:var [poke ticket id value]
+	]
+	
+	title: rejoin [say "Ticket" " #" zeropad params/id 7]
+	include %head.rsp
+	edit?: yes
+	include %navigate-tickets.rsp
+%>
+<script>
+	function MoveSubmit() {
+		var warn = "\n\nWatch out, following fields will be reset:\n    - Category\n    - Version\n    - Fixed In";
+		var res = confirm("<%= join say "Do you really want to move ticket #" params/id%> ?" + warn);
+		if (res) document.forms.ticket.action.value = 'move';		
+		return res;
+	}
+</script>
+<%if ins: select request/config/locals 'short [
+	id: params/id%>
+<div style="position:absolute;top:130px;left:5%;padding-left:12px;text-align:right;">
+	#[Short URL]: <a href="http://issue.cc/<%=ins%>/<%=id%>">http://issue.cc/<%=ins%>/<%=id%></a>
+</div>
+<%]%>
+<div style="position:absolute;top:132px;right:5%;padding-right:12px;text-align:right;">
+	<a href="feed.rsp?tid=<%=id%>"><img src="img/rss.gif" border="0"></a><br>
+</div>
+<div align="center" style="margin-top:10px;">
+	<form method="POST" name="ticket">
+	<table class="tbl" width="90%">
+		<tr>
+			<th width="120">#[Type]</th>
+			<td>
+				<select name="type" class="sel"><%foreach [id label] enum-types [%>
+					<option value="<%=id%>"<% mark/selected id 'type ticket/14%>><%=say label%></option><%
+				]%></select>
+			</td>
+			<th>#[Status]</th>
+			<td>
+				<select name="status"><%foreach [id label] enum-statuses [
+					%><option value="<%=id%>"<% mark/selected id 'status ticket/10%>><%=say label%></option>
+				<%]%></select>
+			</td>
+			<th>#[Date]</th>
+			<td ><%=ticket/18/date%> <%=ticket/18/time%></td>
+		</tr><tr>
+			<th>#[Version]</th>
+			<td><%either empty? list-ver: enum-versions [%>
+				n/a
+				<input type="hidden" name="version" value="<%=ticket/6%>">
+				<%][%>
+				<select name="version"><%foreach [id label] list-ver [
+					%><option value="<%=id%>"<% mark/selected id 'version ticket/6%>><%=label%></option>
+					<%]%>
+				</select>
+				<%]%>
+			</td>
+			<th>#[Category]</th>
+			<td><%either empty? list: enum-categories [%>
+				n/a
+				<input type="hidden" name="category" value="<%=ticket/8%>">
+				<%][%>
+				<select name="category"><%foreach [id label] list [
+					%><option value="<%=id%>"<% mark/selected id 'category ticket/8%>><%=label%></option>
+					<%]%>
+				</select>
+				<%]%>
+			</td>
+			<th>#[Submitted by]</th>
+			<td><%=ticket/21%></td>
+		</tr><tr>
+			<th>#[Platform]</th>
+			<td>
+				<select name="platform"><%foreach [id label] enum-platforms [%>
+					<option value="<%=id%>"<% mark/selected id 'platform ticket/15%>><%=say label%></option><%
+				]%></select>
+			</td>		
+			<th>#[Severity]</th>
+			<td>
+				<select name="severity"><%foreach [id label] enum-severities [%>
+					<option value="<%=id%>"<% mark/selected id 'severity ticket/9%>><%=say label%></option><%
+				]%></select>
+			</td>
+			<th>#[Priority]</th>
+			<td>
+				<select name="priority"><%foreach [id label] enum-priorities [
+				%><option value="<%=id%>"<% mark/selected id 'priority ticket/12%>><%=say label%></option>
+					<%]%>
+				</select>
+			</td>
+		</tr>
+	</table><br>
+	<table class="tbl" width="90%">
+		<tr>
+			<th align="left" width="120">#[Summary]</th>
+			<td colspan="3">
+				<input name="summary" type="text" size="94" value="<%=html-encode ticket/3%>" style="background-color:beige">
+			</td>
+		</tr><tr>
+			<th align="left">#[Description]</th>
+			<td colspan="3">
+				<textarea name="description" rows="10" style="width:99%"><%=ticket/4%></textarea>
+			</td>
+		</tr><tr>
+			<th align="left">#[Example Code]</th>
+			<td colspan="3">
+				<textarea name="code" rows="10" style="width:99%"><%=any [ticket/5 ""]%></textarea>
+			</td>
+		</tr>
+	</table>
+	<br>
+	<table class="tbl" width="90%">
+		<tr>
+			<th width="120">#[Assigned to]</th>
+			<td width="120">n/a</td>
+			<th>#[Fixed in]</th>
+			<td><%either empty? list-ver [%>
+				n/a
+				<input type="hidden" name="fixedin" value="<%=any [ticket/7 0]%>">
+				<%][%>
+				<select name="fixedin">
+					<option value="0">&nbsp;</option>
+					<%foreach [id label] list-ver [
+					%><option value="<%=id%>"<% mark/selected id 'version ticket/7%>><%=label%></option>
+					<%]%>
+				</select>
+				<%]%>
+			</td>
+			<th>#[Last Update]</th>
+			<td><%=ticket/19/date%> <%=ticket/19/time%></td>
+		</tr>
+	</table>
+	<br>
+	<div align="center">
+		<input type="submit" value=" #[Update Ticket] ">&nbsp;
+		<%if any [
+			session/content/user-role = 'admin
+			session/content/user-id = ticket/17
+		][%>
+		<script>
+			function DeleteSubmit() {
+				var res = confirm("<%= join say "Do you really want to delete ticket #" params/id%> ?");
+				if (res) document.forms.ticket.action.value = 'delete';
+				return res;
+			}
+		</script>
+		<input type="submit" value=" #[Delete Ticket] " onclick="return DeleteSubmit();">
+		<%
+		projects: copy skip projects 2
+		remove/part find projects ticket/2 2	;-- removes current ticket's project entry	
+		if not empty? projects [%>
+		&nbsp;
+		<input type="submit" value=" #[Move Ticket To] " onclick="return MoveSubmit();">
+		<select name="project"><%
+		  foreach [id prj] head sort/skip/compare projects 2 2 [%>
+			<option value="<%=id%>"><%=prj%></option>
+		  <%]%></select>
+		<%]
+		]%>
+	</div>
+	<input type="hidden" name="action" value="save">
+	</form>
+</div>
+<%	
+	allow-modify?: yes
+	width: none
+	include %attached.rsp
+	add-cmt: yes
+	include %comments.rsp
+	include %history.rsp
+	include-file %footer.inc
+%>

@@ -1,0 +1,287 @@
+body, div, td, th, select, input, .title, .cmt {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 	 8pt;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	background:	#EEEEEE none repeat scroll 0 0;
+	color:		black;
+	margin:		auto;
+	height: 	100%;
+	text-align: center;
+}
+
+input, textarea, select {
+	border: solid 1px #aaa;	
+}
+
+#page {
+	margin:		0 auto;
+	padding:	0;
+	width:		800px;
+}
+
+#content {
+	background:	transparent url(img/bg-middle.gif) repeat scroll center center;
+	padding:20px;
+}
+
+a:link, a:visited {
+	color:			 #0000E0;
+	text-decoration: none;
+}
+a:hover, a:active, a:focus  {
+	text-decoration: underline;
+}
+
+table {
+	border-spacing:	 0px;
+	border-collapse: collapse;
+	padding:		 0px;
+}
+
+th {
+	font-weight: bold;
+	padding: 	 4px;
+}
+
+div	{
+	padding: 3px;
+}
+
+.center {
+	text-align: center;
+	margin:		0;
+}
+
+.title {
+	font-size:	 18pt;
+	font-weight: 500;
+}
+
+.pagetitle {
+	text-align:		center;
+	vertical-align: middle;
+	font-size: 		16pt;
+}
+
+.footer {
+	margin-top: 	100px;
+	padding-top: 	auto;
+	border-top:  	solid 1px #000;
+	vertical-align: bottom;
+}
+
+.menu {
+	font-size: 	10pt;
+	text-align:	center;
+	border: 	solid 1px #000;
+	background:	#EEE;
+}
+
+.align-right th {
+	text-align: right;
+}
+
+.mark-high {
+	font-weight:bold;
+}
+
+.mark-low {
+	font-weight:normal;
+}
+
+.list, .list td, .list th {
+	border: solid 1px #ccc;
+}
+
+.list td {
+	padding: 4px 1px;
+}
+
+.list th {
+	padding: 	4px 2px;
+	text-align: right;
+}
+
+.list-stats {
+	border: solid 1px #aaa;
+}
+.list-stats td, .list-stats th {
+	border: solid 1px #fff;
+}
+
+.list-stats td {
+	padding: 	8px;
+	background: #e8e8e8;
+}
+
+.list-stats th {
+	padding:	8px;
+	text-align: left;
+	background: #c8c8e8;
+	width:		100px;
+}
+
+#filter-box {
+	margin-top: 20px;
+}
+
+#filters {
+	position:relative;
+}
+
+#filters table {
+	visibility: hidden;
+	position: absolute;
+}
+
+.tickets {
+	border: solid 1px #bbb;
+}
+
+.tickets td, .tickets th {
+	border: groove 1px #FFF;
+	padding: 6px;
+}
+
+.tickets td {
+	height:40px;
+}
+
+.tickets th {
+	background:#c8c8e8;
+	vertical-align:middle;
+}
+
+
+.tickets .bg1, .tbl .bg1 {background:#ffa0a0;}
+.tickets .bg2, .tbl .bg2 {background:#ffd850;}
+.tickets .bg3, .tbl .bg3 {background:#ffd850;}
+.tickets .bg4, .tbl .bg4 {background:#ffd850;}
+.tickets .bg5, .tbl .bg5 {background:#ffd850;}
+.tickets .bg6, .tbl .bg6 {background:#c0c0c0;}
+.tickets .bg7, .tbl .bg7 {background:#ffd850;}
+.tickets .bg8, .tbl .bg8 {background:#cceedd;}
+.tickets .bg9, .tbl .bg9 {background:#8fbaa4;}
+.tickets .bg10,.tbl .bg10 {background:#c0c0c0;}
+
+.list th {
+	padding: 4px 2px;
+	text-align: right;
+}
+
+.tbl {
+	border: solid 1px #aaa;
+}
+
+.tbl th, .tbl td, .tbl .title  {
+	padding: 4px 4px;
+	border: groove 1px #fff;
+}
+
+.tbl th {
+	text-align:left;
+	background:#c8c8e8;
+}
+
+.tbl .center {
+	text-align:center;
+}
+
+.tbl .error {
+	background:#e87070;
+}
+
+.tbl td {
+	background:#e8e8e8;
+	min-width:100px
+}
+
+.tbl .sum {
+	font-weight:	bold;
+	vertical-align: middle;
+	height:			40px;
+}
+
+.colors, .colors td {
+	border: solid 1px #ccc;
+}
+
+.colors {
+	width: 100%;
+}
+
+.colors td {
+	border: 	solid 1px #ccc;
+	margin: 	1px;
+	width: 		11%;
+	text-align: center;
+}
+
+input {
+	font-size: 9pt;
+	height:	   22px;
+}
+
+.cmt, .logs {
+ 	width:90%;
+}
+
+.cmt, .cmt textarea, .cmt td, .cmt th, .logs, .changelog {
+	border: solid 1px #aaa;	
+}
+
+.cmt td {
+	padding: 		4px 4px;
+	background: 	#e8e8e8;
+	vertical-align: top;
+}
+
+.cmt th, .logs th, .changelog th {
+	padding: 	4px 4px;
+	background: #c8c8e8;
+}
+
+.cmt .no-border td {
+	border-width:0px;
+}
+
+.cmt input {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+}
+
+.cmt .smallsz {
+	width:40px;
+}
+
+.cmt .midsz {
+	width:60px;
+}
+
+.logs td, .logs th, .changelog td, .changelog th {
+	border-top: 	solid 1px #aaa;
+	border-bottom: 	solid 1px #aaa;
+}
+
+.logs .even {
+	background:#e8e8e8;
+}
+
+.logs .odd {
+	background:#e0e0e0;
+}
+
+.logs td, .changelog td {
+	padding: 		4px 4px;
+	vertical-align: top;
+}
+
+.changelog {
+	width:80%;
+}

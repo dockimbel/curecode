@@ -1,0 +1,284 @@
+<% 
+	err?: denied?: no
+	fLogin: fPass: ""
+	sess: session/content
+	
+	if all [
+		not sess/login?
+		none? validate/full [action word! *]
+		'identify = request/content/action
+	][
+		either invalid: validate/full [
+			login - *
+			pass  - *
+		][
+			err?: yes
+		][
+			either block? res: identify-user request/content [
+				sess/user-id: first res
+				sess/user-name: request/content/login
+				sess/user-role: to-word second res
+				sess/prefs: get-user-prefs sess/user-id
+				sess/login?: yes
+				if sess/prefs/my-filter [sess/query: copy sess/prefs/my-filter]
+				sess/project-id: sess/prefs/my-project
+				
+				response/redirect "view-tickets.rsp"
+			][			
+				denied?: res
+			]
+		]
+		fLogin: any [request/content/login fLogin]
+		fPass: any [request/content/pass fPass]
+	]
+
+	title: say "Main"
+	include %head.rsp 
+
+	either sess/login? [
+		stats: get-stats-by 'status
+		prj: get-project sess/project-id
+		total: 0
+		foreach [s n] stats [total: total + to integer! n]
+%>
+<div align="center" style="margin-bottom:40px;">
+	<h2>#[Project] : <%=prj/1%></h2>
+<table>	
+	<tr>
+		<td style="padding-right: 60px">
+	<table class="list-stats">
+		<tr>
+			<th>#[Description]</th>
+			<td height="40"><%=activate-links pre-encode html-encode say any [prj/2 ""]%></td>
+		</tr><tr>
+			<th>#[Visibility]</th>
+			<td><%=pick ["private" "public"] to logic! prj/3%></td>
+		</tr>
+		<%if prj/3 <> 1 [%>
+		<tr>
+			<th>#[External link]</th>
+			<td><a href="http://<%=
+				rejoin [
+					request/headers/Host
+					either request/server-port = 80 [""][join ":" request/server-port]
+					request/web-app
+					"/project.rsp?id="
+					session/content/project-id
+				]
+				%>"><%=prj/1%></a>
+			</td>
+		</tr><tr>
+			<th>#[Total]</th>
+			<td><%=mold total%> #[ticket(s)]</td>
+		</tr>
+		<%]%>
+	</table>
+	</td><td class="cols"><%
+			chart-url: http://chart.apis.google.com/chart?
+	
+			repeat c divide length? stats 2 [
+				change at stats c * 2 to integer! pick stats c * 2
+			]
+			total: 0 foreach [s n] stats [total: total + n]
+			list: reduce [
+				copy "Open" 
+					  stats/("submitted")
+					+ stats/("reviewed")
+					+ stats/("pending")
+					+ stats/("built")
+				copy "Waiting"
+					  stats/("problem")
+					+ stats/("waiting")
+					+ stats/("deferred")
+				copy "Closed"
+					  stats/("dismissed")
+					+ stats/("tested")
+					+ stats/("complete")
+			]
+			repeat c 3 [append list/(c * 2 - 1) rejoin [" (" list/(c * 2) ")"]]
+			
+			chart: join chart-url [
+				"chtt=" utf8-encode say "Tickets Overview"
+				"&chs=295x180"
+				"&chd=t:" chart-form/with extract/index list 2 2 #"," total
+				"&chco=ff9700,4e71bc,429120"
+				"&cht=p"
+				"&chp=-1.57"
+				"&chl="  chart-form extract list 2 #"|"
+			]
+			%><img src="<%=chart%>">
+		</td>
+	</tr>
+</table>
+</div>
+<div align="center" style="margin-bottom:40px;">
+<table align="center">
+	<tr>
+		<td style="text-align:right">
+		<%
+			stock: prepare-monthly-stockpile
+
+			chart: join chart-url [
+				"chtt=" utf8-encode say "Stockpile (6 months)"
+				"&chs=400x180"
+				"&chd=t:" chart-form stock/2 #","
+				"&chds=0," stock/3
+				"&chxr=0,0," stock/3 #"," stock/4
+				"&chxt=y"
+				"&chbh=50"
+				"&chco=ffc850"
+				"&cht=bvg"
+				"&chl="  chart-form stock/1 #"|"
+			]
+		%><img src="<%=chart%>">
+		</td>
+		<td style="text-align:left">
+		<%
+			stock: prepare-stockpile get-stockpile-evo
+
+			chart: join chart-url [
+				"chtt=" utf8-encode say "Stockpile evolution (6 months)"
+				"&chs=434x180"
+				"&chd=t2:" chart-form stock/2 #","
+				"|" chart-form stock/3 #","
+				"&chdl=New|Closed"
+				"&chds=0," stock/4 ",0," stock/4
+				"&chxr=0,0," stock/4 #"," stock/5
+				"&chxt=y"
+				"&chco=ffa0a0,cceedd"
+				"&cht=bvg"
+				"&chl="  chart-form stock/1 #"|"
+			]
+		%><img src="<%=chart%>">
+		</td>
+	</tr>
+</table>
+</div>
+<div align="center">
+<table align="center" class="stats-cols">
+	<tr>
+		<td class="cols"><%	
+			total: 0 foreach [s n] stats [total: total + n]
+			foreach s ["complete" "tested" "dismissed"][remove/part find stats s 2]			
+			data: chart-form-full
+				extract/index stats 2 2 
+				["ffa0a0," "ffd850," "C0C0FF," "C0C0FF," "C0C0FF," "cceedd," "8fbaa4,"]
+				extract stats 2
+				total
+			
+			chart: join chart-url [
+				"chtt=" utf8-encode say "Open and Waiting By Status"
+				"&chs=268x180"
+				"&chd=t:" data/1
+				"&chco=" data/2
+				"&cht=p"
+				"&chp=-1.57"
+				"&chl=" data/3
+			]
+			%><img src="<%=chart%>">
+		</td>
+		<td class="cols"><%
+			priorities: get-stats-by 'priority
+			total: 0 foreach [s n] priorities [total: total + to integer! n]
+			data: chart-form-full
+				extract/index priorities 2 2
+				["ffa0a0," "ff8060," "ffb850," "ffd850," "ffe860,"]
+				extract priorities 2
+				total
+			
+			chart: join chart-url [
+				"chtt=" utf8-encode say "All by Priority"
+				"&chs=268x180"
+				"&chd=t:" data/1
+				"&chco=" data/2
+				"&cht=p"
+				"&chp=2.356"
+				"&chl=" data/3
+			]
+			%><img src="<%=chart%>">
+		</td>
+		<td class="cols"><%
+			severities: get-stats-by 'severity
+			total: 0 foreach [s n] priorities [total: total + to integer! n]
+			data: chart-form-full
+				extract/index severities 2 2
+				["ff3030," "ff6060," "ff8060," "ffb850," "ffc850," "ffd850," "ffd8a0," "c0c0c0,"]
+				extract severities 2
+				total
+			
+			chart: join chart-url [
+				"chtt=" utf8-encode say "All by Severity"
+				"&chs=268x180"
+				"&chd=t:" data/1
+				"&chco=" data/2
+				"&cht=p"
+				"&chp=2.356"
+				"&chl=" data/3
+			]
+			%><img src="<%=chart%>">
+		</td>
+	</tr><tr>
+		<td class="cols">
+			<table align="center" class="list-stats">
+				<%foreach [s n] stats [%>
+				<tr><th><%=uppercase/part say s 1%></th><td><%=n%></td></tr>
+				<%]%>
+			</table>
+		</td>
+		<td class="cols">
+			<table align="center" class="list-stats">
+				<%foreach [s n] priorities [%>
+				<tr><th><%=uppercase/part say s 1%></th><td><%=n%></td></tr>
+				<%]%>
+			</table>
+		</td>
+		<td class="cols">
+			<table align="center" class="list-stats">
+				<%foreach [s n] severities [%>
+				<tr><th><%=uppercase/part say s 1%></th><td><%=n%></td></tr>
+				<%]%>
+			</table>
+		</td>
+	</tr>
+</table>
+</div>
+<%][%>
+<br><br><br>
+<div align="center">
+	<a href="register.rsp">#[Register a new account]</a>
+	 | <a href="reset-pass.rsp">#[Reset your password]</a>
+</div>
+<div align="center" style="height:400px;">
+	<br>
+	<form method="POST">
+		<%if err? [%>
+		<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
+		<%]%>
+		<%if denied? [%>
+			<font color="red"><b>#[Error]: <%=denied?%></b></font>
+		<%]%>
+		<table style="padding:4px;">
+			<tr>
+				<th align="right">#[User ID]</th>
+				<td <% if err? [mark/error 'login] %>>
+					<input type="text" id="login" name="login" <%if not empty? fLogin [%>value="<%=fLogin%>"<%]%>>
+				</td>
+			</tr>
+			<tr>
+				<th align="right">#[Password]</th>
+				<td <% if err? [mark/error 'pass] %>>
+					<input type="password" id="pass" name="pass" <%if not empty? fPass [%>value="<%=fPass%>"<%]%>>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="submit" value="#[Login]" style="margin-top:10px">
+				</td>
+			</tr>
+		</table>
+		<input type="hidden" name="action" value="identify">
+	</form>	
+</div>
+<%]%>
+<%include-file %footer.inc%>

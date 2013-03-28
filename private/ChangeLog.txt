@@ -1,0 +1,118 @@
+CureCode "R3 Edition" ChangeLog :
+
+Changelog : 0.9.13 - ??/??/2011
+
+	o FEAT: Search field now accepts multiple keywords.
+	
+
+Changelog : 0.9.12 - 13/12/2010
+
+	o FEAT: Added the ability to move tickets between projects.
+	o FEAT: New search field: "User".
+	o FEAT: New isolated search field: "Commented by".
+	o FEAT: RSS feed added for projects & tickets changes.
+	o FEAT: Short URLs for tickets direct referencing added.
+	
+	o FIX: double line breaks in PRE tags in comments removed.
+	o FIX: stats bar graphs were never displaying per-project stats.
+	o FIX: double escaping of HTML entities in description and comments removed.
+	
+
+Changelog : 0.9.11 - 20/02/2010
+
+	o FEAT: Custom captcha system replaced by ReCaptcha.
+	o FEAT: Auto-adjusting scale for bar charts in stats (more accurate and readable).
+	o FEAT: Category selector added in tickets list detailed view
+	o FEAT: Empty attached file section not shown anymore in tickets read-only view.
+	
+	o FIX: When clicked, attached files will now show up in browser's window by default.
+	o FIX: When attaching file in a new ticket, the returned attached filename was 'none'.
+	
+
+Changelog : 0.9.10 - 17/01/2010
+
+	o FEAT: Ticket's attached files management added.
+	o FEAT: Emails are not sent using Cheyenne's built-in MTA.
+	
+	o FIX: Default query parameters corruption for anonymous users fixed.
+	o FIX: Issue #1371 regarding policy for ticket deletion by owner.
+	o FIX: Dimissed ticket can't be changed by the owner anymore.
+	o FIX: Ordering not working properly for all filters and columns.
+	o FIX: Minor missing translations for french catalog.
+
+	o LOOK: Added Henrik's 33% fix for page header.
+	o LOOK: "Example code" field now use PRE tag for better rendering of source code.
+
+
+Changelog : 0.9.9 - 26/07/2009
+
+	o FEAT: Prefered filters and project can now be user-defined.
+	o FEAT: Categories order can now be set by admin.
+	
+	o FIX:  Stats charts are now correct.
+	o FIX:  Default filter in anonymous mode works now correctly.
+	o FIX:  Switched from HTML quirk mode to correct doctype.
+	
+	o LOOK: Fixed borders issues in CSS (except for IE8)
+
+
+Changelog : 0.9.8 - 26/05/2009
+
+	o FEAT: "User" column added to tickets list page.
+	o FEAT: Search text feature extended to comments.
+	o FEAT: "Main" page now populated with statistics.
+	o FEAT: New Preset filter: "My Reports" (default when logged)
+	
+	o FIX:  "By Submitter" filter now working correctly.
+	o FIX:  Redirection issues with Chrome fixed.
+	o FIX:  In Preset mode, columns sorting links removed.
+	
+	o LOOK: Textarea edit fields now enlarged to maximum width.
+	
+
+Changelog : 0.9.7 - 11/04/2009
+
+	o FEAT: Dismissed tickets are now filtered out from "Active Priorities" and "Worst Severity" filters
+	o FEAT: Current project name added to "Add Ticket" form.
+	o FEAT: Reversed sort order for Versions and Categories lists in admin page.
+	o FEAT: Added an experimental API for getting tickets in REBOL format.
+
+	o FIX:	Front page stats now count "dismissed" tickets as closed.
+	o FIX:	Message "n ticket(s) found" fixed for localization, now translates correctly in french.
+	
+
+Changelog : 0.9.6 - 21/01/2009
+
+	o FEAT: Ticket submitter can now delete his ticket.
+	o FEAT: Admin can now delete any ticket.
+	o FEAT: Admin can now delete a user.
+	o FEAT: Admin can now change user's role.
+	o FEAT: Admin can now force validation of a new user's account.
+	
+	o FIX:	Tickets list loading twice on first visit issue fixed.
+	
+	o LOOK: Input fields and buttons border width reduced to 1 pixel.
+
+
+Changelog : 0.9.5 - 05/12/2008
+
+	o FEAT: Added Preset ticket list filters (from Altme Tracker)
+	o FEAT: Added search ticket by text feature
+	o FEAT: Added direct access to a ticket knowing its ID
+	o FEAT: Filter zone in tickets list page redesigned to account for different filtering modes.
+	o FEAT: Back and forward navigation now possible from inside a ticket.
+	o FEAT: Ticket's ID in descriptions and comments now displayed as links.
+	
+	o FIX:  Parsing URL in description/comments section will now stop on #"<".
+	o FIX:  CSS fixed for tables border rendering on non-IE browser.
+	o FIX:  Case-only changes in ticket's title are now possible.
+	
+	o LOOK: Minor positionning enhancements of login block in home page.
+	o LOOK: "Description" and "Code example" sections default height reduced.
+	
+R3 Tracker Migration :
+
+	o "Response" AltMe Tracker field now map to a comment in CC (keeping the original response's date).
+
+	
+	

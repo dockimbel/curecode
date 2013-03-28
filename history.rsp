@@ -1,0 +1,34 @@
+<div align="center">
+<table class="logs">
+	<tr>
+		<th align="left">#[Date]</th>
+		<th align="left">#[User]</th>
+		<th align="left">#[Field]</th>
+		<th align="left">#[Action]</th>
+		<th align="left">#[Change]</th>
+	</tr>
+	<%
+	cnt: 1
+	foreach [date user action field opt-id old new msg] list-logs params/id [
+	%>
+	<tr class="<%=pick ["odd" "even"] to logic! cnt: cnt xor 1%>">
+		<td width="115"><%=date/date%> <%=form-time date/time%></td>
+		<td width="80"><%=user%></td>
+		<td width="150">
+			<%=history/decode field%> <%=any [all [opt-id join ": " zeropad opt-id 7] ""]%>
+		</td>
+		<td width="60"><%=history/decode action%></td>
+		<td><%=
+			either all [old new] [
+				reform [
+					any [all [old history/decode/value field old] ""]
+					"=>" history/decode/value field new
+				]
+			][
+				any [msg "-"]
+			]
+		%></td>
+	</tr>
+	<%]%>	
+</table>
+</div>

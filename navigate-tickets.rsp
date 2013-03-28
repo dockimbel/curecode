@@ -1,0 +1,30 @@
+<br>
+<%
+	id: request/content/id
+	either all [
+		cid: select request/content 'cursor
+		scq: session/content/query
+	][
+		list: select-tickets/cursor scq cid: to-integer cid
+		if list/3 = id [append list none]
+		if list/1 = id [insert list none]
+%>
+<div align="center">
+	#[Previous]
+	<input
+		type="button"
+		value="&nbsp;&lt;&nbsp;"
+		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/1%>&cursor=<%=cid - 1%>';"
+		<%if not list/1 [prin "disabled"]%>
+	>
+	<input
+		type="button"
+		value="&nbsp;&gt;&nbsp;"
+		onclick="window.location='<%=pick ["edit-" ""] edit?%>ticket.rsp?id=<%=list/3%>&cursor=<%=cid + 1%>';"
+		<%if not list/3 [prin "disabled"]%>
+	>
+	#[Next]
+</div>
+<%	][%>
+<br><br>
+<%  ]%>

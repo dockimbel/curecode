@@ -1,0 +1,88 @@
+<%
+	if any [
+		validate/full [
+			id		integer! *
+			file	-		 *
+			mode	word!	 *
+		]
+		all [
+			params: request/content
+			params/mode <> 'add-file
+		]
+	][
+		print "access denied"
+		response/end
+	]
+	
+	root: %public/files/
+	
+	target: either file? params/file/2 [
+		file: split-path params/file/2
+		replace id: file/2 ".tmp" ".att"
+		if exists? join root file/2 [
+			random/seed now/time/precise
+			until [
+				pos: find file/2 #"."
+				file/2: join random copy/part file/2 pos pos
+				not exists? join root file/2
+			]
+		]
+		file/2
+	][
+		;-- create unique file name
+		id: make file! 12
+		until [
+			clear id
+			loop 8 [insert tail id #"`" + random 26]
+			insert tail id ".att"
+			not exists? join root id
+		]
+		id
+	]
+	request/store/as params/file join root target
+	sess: session/content
+
+	either negative? params/id [
+		if none? sess/files [sess/files: make block! 1]
+		repend/only sess/files [params/file/1 target]
+	][
+		add-file params/id params/file/1 target
+	]
+
+	if find [%.jpg %.jpeg %.png %.gif %.bmp] suffix? params/file/1 [
+		;-- make thumbnail
+		call/wait reform [
+			to-local-file %public/files/nconvert
+			"-out png -ratio -resize 64 64 -o"
+			to-local-file join root [target %-small.png]
+			to-local-file join root target
+			pick ["" "&> /dev/null"] system/version/4 = 3
+		]
+	]
+	
+;--- View version is missing a decent filter!!!
+;
+;	if all [
+;		find system/components 'draw
+;		find [%.jpg %.jpeg %.png %.gif *.bmp] suffix? params/file/1
+;	][
+;		img: load join root target
+;		ratio: img/size/x / img/size/y
+;		size: 64x64
+;		either ratio <= 1 [
+;			size/x: round/half-ceiling size/x * ratio
+;		][
+;			size/y: round/half-ceiling size/y / ratio
+;		]		
+;		new: make image! size
+;		draw new [image-filter nearest image img 0x0 size border]
+;		save/png join root [target %-small.png] new
+;	]
+%>
+<html>
+<head>
+</head>
+<body>
+File uploaded successfully.
+</body>
+</html>

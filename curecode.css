@@ -1,0 +1,448 @@
+body, div, td, th, select, input, .title, .cmt {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 	 8pt;
+}
+
+html {
+	height: 100%;
+}
+
+h2 {
+	font-size: 14pt;
+}
+
+body {
+	background:	white;
+	color:		black;
+	margin:		auto;
+	padding:	10px;
+	height: 	100%;
+}
+
+input, textarea, select {
+	border: solid 1px #aaa;	
+}
+
+input, textarea {
+	padding: 2px;
+	font-size: 9pt;
+}
+
+a:link, a:visited {
+	color:			 #0000E0;
+	text-decoration: none;
+}
+a:hover, a:active, a:focus  {
+	text-decoration: underline;
+}
+
+table {
+	border-spacing:	 0px;
+	border-collapse: collapse;
+	padding:		 0px;
+}
+
+th {
+	font-weight: bold;
+	padding: 	 4px;
+}
+
+div	{
+	padding: 3px;
+}
+
+.cmt pre {
+	margin-left: 16px;
+}
+
+.center {
+	text-align: center;
+	margin:		0;
+}
+
+.title {
+	font-size:	 18pt;
+	font-weight: 500;
+}
+
+.pagetitle {
+	text-align:		center;
+	vertical-align: middle;
+	font-size: 		16pt;
+}
+
+.footer {
+	margin-top: 	100px;
+	padding-top: 	auto;
+	border-top:  	solid 1px #000;
+	vertical-align: bottom;
+}
+
+.menu {
+	font-size: 	10pt;
+	text-align:	center;
+	border: 	solid 1px #000;
+	background:	#EEE;
+	margin-top: 20px;
+}
+
+.align-right th {
+	text-align: right;
+}
+
+.mark-high {
+	font-weight:bold;
+}
+
+.mark-low {
+	font-weight:normal;
+}
+
+.list, .list td, .list th {
+	border: solid 1px #ccc;
+}
+
+.list td {
+	padding: 4px 1px;
+}
+
+.list th {
+	padding: 	4px 2px;
+	text-align: right;
+}
+
+.list-stats {
+	border: solid 1px #aaa;
+}
+
+html>body .list-stats {
+	border: 1px solid #bbb;
+}
+
+/*
+	non-IE specific code to fix borders
+*/
+html>body .list-stats td, html>body .list-stats th {
+	border: 1px solid #fff;
+	padding: 6px;
+}
+
+/*
+	non-IE specific code to fix borders 
+*/
+html>/**/body .list-stats td , html>/**/body  .list-stats th {
+	border: 1px inset #fff;
+	border-color: #FFF;
+	padding: 8px;
+}
+
+.list-stats td, .list-stats th {
+	text-align: left;
+}
+
+.list-stats td {
+	background: #e8e8e8;
+}
+
+.list-stats th {
+	padding:	4px;
+	text-align: right;
+	vertical-align: middle;
+	background: #c8c8e8;
+	width:		100px;
+}
+
+
+.stats-cols {
+	text-align: center;
+}
+
+.stats-cols tr {
+	vertical-align: top;
+}
+
+.stats-cols .cols {
+	padding-top: 20px;
+	text-align: center;
+}
+
+.stats-cols th {
+	font-weight: normal;
+}
+
+.stats-cols td {
+	text-align: right;
+}
+
+#filter-box {
+	margin-top: 20px;
+}
+
+#filters {
+	position:relative;
+}
+
+#filters table {
+	visibility: hidden;
+	position: absolute;
+}
+
+#filters input[type=text] {
+	font-size: 0.99em;
+	height: 13px;
+}
+
+.tickets {
+	border: 1px solid #bbb;
+	width: 100%;
+}
+
+html>body .tickets {
+	border: 1px solid #bbb;
+}
+
+/*
+	non-IE specific code to fix borders
+*/
+html>body .tickets td, html>body .tickets th {
+	border: 1px solid #fff;
+	padding: 6px;
+}
+
+/*
+	non-IE specific code to fix borders 
+*/
+html>/**/body .tickets td , html>/**/body  .tickets th {
+	border: 1px inset #fff;
+	border-color: #FFF;
+	padding: 6px;
+}
+
+.tickets td {
+	height:20px;
+}
+
+.tickets th {
+	background:#c8c8e8;
+	vertical-align:middle;
+}
+
+
+.tickets .bg1, .tbl .bg1 {background:#ffa0a0;}
+.tickets .bg2, .tbl .bg2 {background:#ffd850;}
+.tickets .bg3, .tbl .bg3 {background:#C0C0FF;}
+.tickets .bg4, .tbl .bg4 {background:#C0C0FF;}
+.tickets .bg5, .tbl .bg5 {background:#C0C0FF;}
+.tickets .bg6, .tbl .bg6 {background:#c0c0c0;}
+.tickets .bg7, .tbl .bg7 {background:#ffd850;}
+.tickets .bg8, .tbl .bg8 {background:#cceedd;}
+.tickets .bg9, .tbl .bg9 {background:#8fbaa4;}
+.tickets .bg10,.tbl .bg10 {background:#c0c0c0;}
+
+.list th {
+	padding: 4px 2px;
+	text-align: right;
+}
+
+.tbl {
+	border: solid 1px #aaa;
+}
+
+.tbl th, .tbl td, .tbl .title  {
+	padding: 4px 4px;
+	border: solid 1px #fff;
+} 
+
+/*
+	non-IE specific code to fix borders
+*/
+html>/**/body .tbl th, html>/**/body .tbl td, html>/**/body .tbl .title  {
+	border: 1px inset #fff;
+	border-color: #FFF;
+	padding: 4px 4px;
+} 
+
+.tbl th {
+	text-align:left;
+	background:#c8c8e8;
+}
+
+.tbl .center {
+	ztext-align:center;
+}
+
+.tbl .error {
+	background:#e87070;
+}
+
+.tbl td {
+	text-align:left;
+	background:#e8e8e8;
+	min-width:100px
+}
+
+.tbl .sum {
+	font-weight:	bold;
+	vertical-align: middle;
+	height:			40px;
+}
+
+.colors, .colors td {
+	border: solid 1px #ccc;
+}
+
+.colors {
+	width: 100%;
+}
+
+.colors td {
+	border: 	solid 1px #ccc;
+	margin: 	1px;
+	width: 		10%;
+	text-align: center;
+}
+
+
+.cmt, .logs {
+ 	width:90%;
+}
+
+.cmt, .cmt textarea, .cmt td, .cmt th, .logs, .changelog {
+	border: solid 1px #aaa;	
+}
+
+.cmt td {
+	padding: 		4px 4px;
+	background: 	#e8e8e8;
+	vertical-align: top;
+	text-align:		left;
+}
+
+.cmt th, .logs th, .changelog th {
+	text-align:	left;
+	padding: 	4px 4px;
+	background: #c8c8e8;
+}
+
+.cmt .no-border td {
+	border-width:0px;
+}
+
+.cmt input {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+}
+
+.cmt .smallsz {
+	width:40px;
+}
+
+.cmt .midsz {
+	width:60px;
+}
+
+.logs td, .logs th, .changelog td, .changelog th {
+	text-align:	left;
+	border-top: 	solid 1px #aaa;
+	border-bottom: 	solid 1px #aaa;
+}
+
+.logs .even {
+	background:#e8e8e8;
+}
+
+.logs .odd {
+	background:#e0e0e0;
+}
+
+.logs td, .changelog td {
+	padding: 		4px 4px;
+	vertical-align: top;
+}
+
+.changelog {
+	width:80%;
+	margin-top:20px;
+}
+
+#up_progress {
+	border: 1px silver solid;
+	width:204px;
+	height:8px;
+	margin: 3px 0 0 3px;
+	padding:0;
+	background-color: white;
+}
+#up_bar {
+	margin:0;
+	padding:0;
+	background:blue;
+	width:0px;
+	height:8px;
+	zfloat:left;
+}
+#up_count {
+	font-size:0.9em;
+	margin-left: 3px;
+}
+
+div.fileinputs {
+	position: relative;
+	width: 270px;
+	padding-bottom:0;
+}
+
+div.fakefile {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+	width: 270px;
+}
+
+input.fakeinput {
+	width: 200px;
+}
+
+input.file {
+	position: relative;
+	text-align: right;
+	-moz-opacity:0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+	width: 260px;
+	padding-bottom:0;
+	margin-bottom:0;
+}
+
+table.noborder {
+	margin-top: 10px;
+}
+
+table.noborder td {
+	margin:0;
+	padding:0;
+	border:0;
+}
+
+.attached-doc {
+	float: left;
+	text-align: center;
+	width: 64px;
+	height: 64px;
+	padding: 0;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+#fileslist {
+	zheight: 74px;
+	margin-bottom: 10px;
+	margin-top: 0;
+	padding-top:0;
+}
+
+#fileslist .withborder {
+	border: 1px solid #aaa;
+}

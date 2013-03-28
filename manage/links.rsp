@@ -1,0 +1,9 @@
+<%if session/content/user-role <> 'admin [
+	response/reset
+	response/redirect request/web-app
+]%>
+<br>
+<div align="center">
+	<%either page <> 'projects [%><a href="projects.rsp">#[Projects]</a><%][%>#[Projects]<%]%> |
+	<%either page <> 'users [%><a href="users.rsp">#[Users]</a><%][%>#[Users]<%]%>
+</div>

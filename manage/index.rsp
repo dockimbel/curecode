@@ -1,0 +1,7 @@
+<% 
+	title: say "Manage"
+	include %../head.rsp
+	page: none
+	include %links.rsp
+	include-file %../footer.inc
+%>

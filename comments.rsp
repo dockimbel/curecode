@@ -1,0 +1,91 @@
+<%
+	edit-cmt: no
+	params: request/content
+	if string? action: select params 'action [
+		validate [action word!]
+	]	
+	switch select params 'action [
+		add-cmt [
+			if none? validate/full [cmt - *][
+				add-comment params
+				response/redirect join request/parsed/url "#comments"
+			]
+		]
+		edit-cmt [
+			if none? validate/full [cid	integer! *][
+				edit-cmt: yes
+			]
+		]
+		upd-cmt [
+			if none? validate/full [
+				cid integer! *
+				cmt    -     *
+			][
+				update-comment params
+				response/redirect join request/parsed/url "#comments"
+			]
+		]
+		del-cmt [
+			if none? validate/full [cid	integer! *][
+				remove-comment params
+				response/redirect join request/parsed/url "#comments"
+			]
+		]
+	]
+%>
+<div align="center">
+<table class="cmt">
+	<tr><th colspan="2" align="left"><a name="comments">#[Comments]</a></th></tr>
+	<%foreach [id user date cmt] list-comments params/id [%>
+	<tr>
+		<td width="120" valign="top">
+			<small>(<%=zeropad id 7%>)</small>
+			<br><b><%=user%></b><br><%=date/date%> <%=form-time date/time%><br><br>
+			<%if user = session/content/user-name [
+				if not all [edit-cmt id = params/cid][%>
+				<table class="no-border"><tr><td>
+				<form method="POST" action="<%=join request/parsed/url "#comments"%>">
+					<input type="submit" value="#[Edit]" class="smallsz">
+					<input type="hidden" name="cid" value="<%=id%>">
+					<input type="hidden" name="action" value="edit-cmt">
+				</form>
+				</td><td>
+				<form method="POST">
+					<input type="submit" value="#[Delete]" class="midsz">
+					<input type="hidden" name="cid" value="<%=id%>">
+					<input type="hidden" name="action" value="del-cmt">
+				</form>
+				</td></tr></table>
+				<%]
+			  ]%>
+		</td>
+		<td valign="top">
+			<%either all [edit-cmt id = params/cid][%>
+			<form method="POST">
+				<input type="hidden" name="cid" value="<%=id%>">
+				<input type="hidden" name="action" value="upd-cmt">
+				<textarea name="cmt" cols="60" rows="10"><%=cmt%></textarea><br>
+				<input type="submit" value="#[Update]" class="midsz">
+			</form>
+			<%][%>
+				<%=activate-links pre-encode cmt%>
+			<%]%>
+		</td>
+	</tr>
+	<%]%>	
+	<%if add-cmt [%>
+	<tr>
+		<form method="POST" action="<%=join request/parsed/url "#comments"%>">
+		<th align="center" width="120">
+			<input type="submit" value="#[Add New]">
+		</th>
+		<td>
+			<textarea name="cmt" rows="10"  style="width:99%"></textarea>
+		</td>
+		<input type="hidden" name="action" value="add-cmt">
+		</form>
+	</tr>
+	<%]%>
+</table>
+</div>
+<br>

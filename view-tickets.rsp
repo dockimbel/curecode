@@ -1,0 +1,291 @@
+<%
+	params: session/content/query
+	rc: request/content
+	
+	invalid?: validate [orderby integer!]
+	order: any [
+		all [
+			not invalid?
+			rc/orderby
+		]
+		all [
+			params
+			params/orderby
+		]
+		8		; default : order by "last-update"
+	]
+	validate [
+		page	integer!
+		action 	word!
+	]
+	if all [params rc/action = 'navigate][params/page: rc/page]	; force page in saved query
+	
+	if any [
+		not params						; no saved query ?
+		rc/action = 'search
+	][
+		validate [
+			preset		string!
+			filter		integer!
+			text		string!
+			fields		integer!
+			tid			integer!
+			user		integer!
+			status		integer!
+			hstatus		integer!
+			type		integer!
+			severity	integer!
+			priority	integer!
+			version		integer!
+			fixedin		integer!
+			cat 		integer!
+			resolv		integer!
+			results		integer!
+			find		string!
+			apply		string!
+		]
+		params: request/content
+		
+		if all [
+			params/find
+			params/tid
+			check-ticket-id params/tid
+		][
+			response/redirect join "ticket.rsp?id=" params/tid
+		]
+		
+		;-- workaround "preset" not being a button
+		if any [params/find params/apply][params/preset: none]
+		
+		if none? params/results [params/results: 25]
+		params/page: 1
+		session/content/query: params
+	]
+	params/orderby: order
+	request/content: params	 ;-- needed for 'mark function (TBD: refactor 'mark func)
+
+	count: select-tickets/count params
+	count: to-integer count/1/1
+	params/page: max 1 min params/page ceil count / params/results
+	tickets: select-tickets params
+	
+	order: params/orderby
+	
+	title: say "Tickets List"
+	include %head.rsp 
+%>
+<script>
+	var filters = ['preset-filters', 'search-filters', 'detail-filters'];
+	var fields = ['type', 'severity', 'status', 'hstatus', 'priority', 'results'];
+	
+	function ShowFilters(index) {
+		var i;
+		for(i = 0; i < filters.length; i++) {
+			document.getElementById(filters[i]).style.visibility = (i == index ? 'visible':'hidden');
+		}
+		if (index == 0 && 0 == <%=pick [1 0] to-logic params/preset%>)
+			doFilter(document.getElementsByName('filter')[0].selectedIndex);
+	}
+	function doFilter(index) {
+		var f = document.getElementById('list');
+		f.preset.value='search';
+		f.submit();
+	}
+	function ResetDetailFilters() {
+		for (var f in fields) document.getElementsByName(fields[f])[0].selectedIndex = 0;
+	}
+</script>
+<table width="100%">
+	<tr>
+		<td align="left">
+			<form method="POST" id="list">
+			<input type="hidden" name="preset" value="<%=any [params/preset ""]%>">
+			<div id="filters">
+				<table id="preset-filters">
+					<tr>
+						<th align="left">#[Filter]</th>
+					</tr><tr>
+						<td colspan="6">
+							<select name="filter" onchange="doFilter(this.value);">
+							<%foreach [id label] enum-filters [
+								%><option value="<%=id%>" <%mark/selected id 'filter 0%>><%=say label%></option>
+							<%]%>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<table id="search-filters">
+					<tr>
+						<th align="left">#[Keyword(s)]</th>
+						<th align="left">#[Fields]</th>
+						<th align="left"></th>
+						<th align="left" style="padding-left:8px">#[Ticket ID]</th>
+					</tr><tr>
+						<td><input type="text" name="text" value="<%=any [params/text ""]%>" size="30"></td>
+						<td>
+							<select name="fields">
+								<option value="1" <%mark/selected 1 'fields 1%>>&lt;#[All]&gt;</option>
+								<option value="2" <%mark/selected 2 'fields 1%>>#[Summary]</option>
+								<option value="3" <%mark/selected 3 'fields 1%>>#[Description]</option>
+								<option value="4" <%mark/selected 4 'fields 1%>>#[Comments]</option>
+								<option value="5" <%mark/selected 5 'fields 1%>>#[User]</option>
+								<optgroup label="----------"></optgroup>
+								<option value="6" <%mark/selected 6 'fields 1%>>#[Commented by]</option>
+							</select>
+						</td>
+						<td style="padding-left:8px">#[or]</td>
+						<td style="padding-left:8px"><input type="text" name="tid" value="" size="8"></td>
+						<td style="padding-left:8px"><input type="submit" name="find" value="#[Find]"></td>
+					</tr>
+				</table>
+				<table id="detail-filters">
+					<tr>
+						<th class="center">#[Type]</th>
+						<%if cat?: all [
+							session/content/project-id > 1
+							not empty? list-cat: enum-categories
+						  ][
+						%>
+						<th class="center">#[Category]</th>
+						<%]%>
+						<th class="center">#[Severity]</th>
+						<th class="center">#[Status]</th>
+						<th class="center">#[Hide status]</th>
+						<th class="center">#[Priority]</th>
+						<th class="center">#[Results]</th>
+						<th  style="width:200px;"></th>
+					</tr><tr>
+						<td>
+							<select name="type">
+								<option value="0">[#[any]]</option>
+							<%foreach [id label] enum-types [
+								%><option value="<%=id%>" <%mark/selected id 'type 0%>><%=say label%></option><%
+							]%></select>
+						</td>
+						<%if cat? [%>
+						<td>
+							<select name="cat">
+								<option value="0">[#[any]]</option>
+							<%foreach [id label] list-cat [
+								%><option value="<%=id%>" <%mark/selected id 'cat 0%>><%=label%></option><%
+							]%></select>
+						</td>
+						<%]%>
+						<td>
+							<select name="severity">
+								<option value="0">[#[any]]</option>
+							<%foreach [id label] enum-severities [
+								%><option value="<%=id%>" <%mark/selected id 'severity 0%>><%=say label%></option><%
+							]%></select>
+						</td><td>
+							<select name="status">
+								<option value="0">[#[any]]</option>
+							<%foreach [id label] enum-statuses [
+								%><option value="<%=id%>" <%mark/selected id 'status 0%>><%=say label%></option>
+							<%]%></select>
+						</td><td>
+							<select name="hstatus">
+								<option value="0">[#[none]]</option>
+							<%foreach [id label] enum-statuses [
+								%><option value="<%=id%>" <%mark/selected id 'hstatus 0%>><%=say label%></option>
+							<%]%></select>
+						</td><td>
+							<select name="priority">
+								<option value="0">[#[any]]</option>
+							<%foreach [id label] enum-priorities [
+								%><option value="<%=id%>" <%mark/selected id 'priority 0%>><%=say label%></option>
+							<%]%>
+							</select>
+						</td><td>
+							<select name="results">
+							<%n: 25 loop 4 [
+								%><option value="<%=n%>" <%mark/selected n 'results 0%>><%=n%></option><%
+								n: n * 2
+							]%>
+							</select>
+						</td><td style="white-space:nowrap;">
+							<input type="button" name="apply" value="#[Reset]" onclick="ResetDetailFilters();">
+							&nbsp;
+							<input type="submit" name="apply" value="#[Apply]">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<input type="hidden" name="action" value="search">
+			<input type="hidden" name="page" value="<%=any [params/page 1]%>">
+			</form>
+		</td><td align="right">
+			<b>#[Filters Type]:</b>&nbsp;
+			<a href="javascript:ShowFilters(0);">#[Preset]</a> |
+			<a href="javascript:ShowFilters(1);">#[Search]</a> |
+			<a href="javascript:ShowFilters(2);">#[Detail]</a>
+		</td
+	</tr>
+</table>
+</div>
+<br><br>
+<div id="filter-box">
+<%either empty? tickets [%>
+	<br><center>#[No ticket found]</center>
+<%][
+	include %navigate-results.rsp
+	show?: not params/preset
+	%>
+	<%=count%> <%=say pick ["tickets found" "ticket found"] count > 1%>
+	<div style="position:absolute;top:190px;right:10px;text-align:right;">
+		<a href="feed.rsp?prj=<%=session/content/project-id%>"><img src="img/rss.gif" border="0"></a><br>
+	</div>
+	<table class="tickets">
+		<tr>
+			<th width="50"><%  coltitle 1 show? "ID"		%></th>
+			<th width="20"><%  coltitle 2 show? "#"			%></th>
+			<th width="60"><%  coltitle 3 show? "Type"		%></th>
+			<th width="70"><%  coltitle 4 show? "Severity"	%></th>
+			<th width="70"><%  coltitle 5 show? "Status"	%></th>
+			<th width="60"><%  coltitle 6 show? "Priority"	%></th>
+			<th width="60"><%  coltitle 7 show? "User"		%></th>
+			<th width="80"><%  coltitle 8 show? "Updated"	%></th>
+			<th align="left"><%coltitle 9 show? "Summary"	%></th>
+		</tr><%
+		line: 1 
+		dev?: to-logic find [admin developer] session/content/user-role
+		forall tickets [
+			ticket: tickets/1
+			c: (params/page - 1 * params/results) + index? tickets
+		%><tr class="bg<%=ticket/8%>">
+			<td align="center">
+				<a href="<%=pick ["edit-" ""] dev?%>ticket.rsp?id=<%=ticket/1%>&cursor=<%=c%>"><%=zeropad ticket/1 7%></a>
+			</td>
+			<td align="center"><%=any [all [zero? any [ticket/2 0] "&nbsp;"] ticket/2]%></td>
+			<td align="center"><%=say ticket/3%></td></td>
+			<td align="center" class="mark-<%= pick ["high" "low"] ticket/9 > 5%>"><%=say ticket/4%></td>
+			<td align="center"><%=say ticket/5%></td>
+			<td align="center"><%=say ticket/10%></td>
+			<td align="center"><%=ticket/11%></td>
+			<td align="center"><%=ticket/6/date%><br><%=form-time ticket/6/time%></td>
+			<td><%=ticket/7%></td>
+		</tr>	
+		<%]%>
+	</table>
+	<%include %navigate-results.rsp%>
+	<br><br>
+	<div>
+		<table class="colors">
+			<tr>
+				<td bgcolor="#ffa0a0">#[submitted]</td>
+				<td bgcolor="#ffd850">#[reviewed]</td>
+				<td bgcolor="#C0C0FF">#[problem]</td>
+				<td bgcolor="#C0C0FF">#[waiting]</td>
+				<td bgcolor="#C0C0FF">#[deferred]</td>
+				<td bgcolor="#c0c0c0">#[dismissed]</td>
+				<td bgcolor="#ffd850">#[pending]</td>
+				<td bgcolor="#cceedd">#[built]</td>
+				<td bgcolor="#8fbaa4">#[tested]</td>
+				<td bgcolor="#c0c0c0">#[complete]</td>
+			</tr>
+		</table>
+	</div>
+<%]%>
+</div>
+<script>ShowFilters(<%=any [all [params/find 1] all [params/apply 2] 0]%>);</script>
+<%include-file %footer.inc%>

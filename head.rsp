@@ -1,0 +1,66 @@
+<%sess: session/content%><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title><%=title%></title>
+	<link href="<%=request/web-app%>/curecode.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<form method="POST" action="<%=request/web-app%>/set-project.rsp" name="selprj">
+<table width="100%">
+	<tr>
+		<td width="33%">
+			<%include-file join request/config/root-dir [
+				%/private/instances/
+				request/config/locals/instance
+				%title.inc
+			  ]
+			%>
+		</td>
+		<td width="33%" class="pagetitle">
+			<%=title%>
+		</td>
+		<td width="33%" align="right">
+			#[User]: 
+			<%either sess/login? [%>
+				<%=sess/user-name%> (<%=sess/user-role%>)
+			<%][%>
+				#[anonymous]
+			<%]%>
+			<br><br>
+			#[Project]: <%
+				projects: enum-projects/public				
+				either sess/user-role = 'admin [
+					append projects enum-projects/priv
+				][
+					if all [
+						sess/login? 
+						prj: list-granted-projects sess/user-id
+					][
+						append projects prj
+					]
+				]
+			%>
+			<select name="prj-id" onchange="document.forms.selprj.submit();">
+			<%
+			projects/2: say projects/2	;-- catch "All projects" for translation
+			foreach [id prj] head sort/skip/compare skip projects 2 2 2 [%>
+				<option value="<%=id%>" <%=any [all [id = sess/project-id "selected"] ""]%>><%=prj%></option>
+			<%]%></select>
+			<input type="hidden" name="ref" value="<%=request/parsed/url%>">
+		</td>
+	</tr>
+</table>
+</form>
+<div class="menu">
+	<a href="<%=request/web-app%>/index.rsp"><%=say pick ["Main" "Login"] sess/login?%></a> |
+	<a href="<%=request/web-app%>/view-tickets.rsp">#[View Tickets]</a>
+	<%if sess/login? [%> |
+		<a href="<%=request/web-app%>/add-ticket.rsp">#[Add Ticket]</a> | 
+		<%if sess/user-role = 'admin [%>
+			<a href="<%=request/web-app%>/manage/index.rsp">#[Manage]</a> |
+		<%]%>
+	<a href="<%=request/web-app%>/changelog.rsp">#[Change Log]</a> |
+	<a href="<%=request/web-app%>/profile.rsp">#[Profile]</a> |
+	<a href="<%=request/web-app%>/logout.rsp">#[Logout]</a>
+	<%]%>
+</div>

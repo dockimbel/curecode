@@ -1,0 +1,214 @@
+<% 
+	validate [
+		id		integer!
+		action	word!
+		form	word!
+	]
+	err?: no
+	param: request/content
+	
+	if param/form = 'versions [
+		all [
+			param/action = 'Add
+			none? validate/full [vlabel - *]
+			add-version param
+		]
+		all [
+			param/action = 'Remove
+			none? validate/full [vid integer! *]
+			remove-version param/vid
+		]
+	]
+	if param/form = 'categories [
+		all [
+			param/action = 'Add
+			none? validate/full [clabel - *]
+			add-category param
+		]
+		all [
+			param/action = 'Remove
+			none? validate/full [cat block! *]
+			remove-category param/cat/2
+		]
+		all [
+			param/action = 'Swap
+			none? validate/full [
+				cat		block!		*
+				dir		word!		*
+			]
+			either param/dir = 'up [						
+				swap-category-positions param/cat/1 param/cat/2
+			][
+				swap-category-positions param/cat/2 param/cat/3
+			]
+		]
+	]
+	
+	list: [fName fDesc fPriv]
+	specs: [
+		name	-			*
+		desc	-			-
+		priv	integer!	-
+	]
+	default-main: [
+		set :list either param/id [
+			mode: 'Edit
+			get-project param/id
+		][
+			mode: 'Add
+			none
+		]
+	]
+	
+	either any [none? param/form param/form = 'main][
+		switch/default param/action [
+			Add [
+				either invalid: validate/full specs [
+					err?: yes
+					set :list reduce [param/name param/desc param/priv]
+				][
+					param/priv: to-integer param/priv
+					add-project param
+					response/redirect "projects.rsp"
+				]
+			]
+			Edit [
+				either any [
+					invalid: validate/full specs
+					none? param/id
+				][
+					err?: yes
+					set :list reduce [param/name param/desc param/priv]
+				][
+					param/priv: to-integer param/priv
+					update-project param
+					response/redirect "projects.rsp"
+				]
+			]
+		] default-main
+	][
+		do default-main
+	]
+	
+	title: say join pick ["Add" "Edit"] mode = 'Add " Project"
+	include %../head.rsp
+	page: 'projects
+	include %links.rsp
+%>
+<br>
+<div align="center">
+	<form method="POST" action="edit-project.rsp?id=<%=param/id%>">
+		<table class="tbl"><%if param/id [%>
+			<tr>
+				<th>#[Project ID]</th>
+				<td><%=param/id%></td>
+			</tr><%]%>
+			<tr>
+				<th <% if err? [mark/error 'name] %>>#[Name]</th>
+				<td><input type="text" size="24" name="name" value="<%=any [fName ""]%>"></td>
+			</tr><tr>
+				<th>#[Description]</th>
+				<td><textarea cols="60" rows="4" name="desc"><%=any [fDesc ""]%></textarea></td>
+			</tr><tr>
+				<th>#[Private]?</th>
+				<td><input type="checkbox" name="priv" value="1" <%=all [fPriv = 1 "checked"]%>></td>
+			</tr>
+		</table>
+		<br>
+		<input type="submit" value=" <%=say pick ["Add" "Save"] mode = 'Add%> ">
+		<input type="hidden" name="action" value="<%=mold mode%>"> 
+		<input type="hidden" name="form" value="main"> 
+	</form>
+</div>
+<%if param/id [%>
+<br><br>
+<table width="600" align="center"><tr><td valign="top">
+<div>
+	<h4>#[Versions]</h4>
+	<form method="POST">
+	<table class="tbl">
+		<tr>
+			<th>#[Version]</th>
+			<th>#[Action]</th>
+		</tr><tr>
+			<td>
+				<input type="text" name="vlabel" value="">
+			</td><td>
+				<input type="submit" value="#[Add]">
+				<input type="hidden" name="action" value="add"
+			</td>
+		</tr>
+		<% if not empty? list: get-versions param/id [
+			foreach [id label] sort/skip/reverse list 2 [%>
+		<tr>
+			<td><%=any [label ""]%></td>
+			<td>	
+				<a href="edit-project.rsp?id=<%=param/id%>&vid=<%=id%>&action=remove&form=versions">[#[Remove]]</a>
+			</td>
+		</tr>
+			<%]
+		  ]%>
+	</table>
+	<input type="hidden" name="form" value="versions">
+	</form>
+</div>
+</td><td valign="top">
+<div>
+	<script>
+		function SetArgs(dir) {
+			document.forms.catform.action.value='swap';
+			document.forms.catform.dir.value=dir;
+		}
+	</script>
+	<h4>#[Categories]</h4>
+	<form method="POST" action="edit-project.rsp?id=<%=param/id%>" id="catform">
+	<table class="tbl">
+		<tr>
+			<th>#[Category]</th>
+			<th>#[Action]</th>
+		</tr><tr>
+			<td>
+				<input type="text" name="clabel" value="">
+			</td><td style="white-space: nowrap">
+				<input type="submit" value="#[Add]">
+				<input type="hidden" name="action" value="add">
+				::
+				<input type="submit" value="#[Up]"   onclick="SetArgs('up');">
+				<input type="submit" value="#[Down]" onclick="SetArgs('down');">
+			</td>
+		</tr>
+		<%if not empty? list: get-categories param/id [
+			insert list none
+			append list none
+			cid: all [
+				block? cid: select param 'cat
+				second cid
+			]
+			until [
+				set [before cur after] list
+				%>
+		<tr>
+			<td <%if cur/1 = cid [%>style="background-color:moccasin"<%]%>><%=any [cur/2 ""]%></td>
+			<td <%if cur/1 = cid [%>style="background-color:moccasin;"<%]%>>
+				<input 
+					type="radio"
+					name="cat"
+					value="<%=any [all [before before/1] 0]%> <%=cur/1%> <%= any [all [after after/1] 0]%>"
+					<%if cur/1 = cid [%>checked<%]%>
+					style="border-style:none;"
+				>
+			</td>
+		</tr>
+			<%	none? second list: next list
+			]
+		  ]%>
+	</table>
+	<br>
+	<input type="submit" name="butAct" value="#[Remove]" onclick="document.forms.catform.action.value='remove';" style="margin-left:154px">
+	<input type="hidden" name="dir" value="">
+	<input type="hidden" name="form" value="categories">
+	</form>
+</div>
+</tr></table>
+<%]%>
+<%include-file %../footer.inc%>

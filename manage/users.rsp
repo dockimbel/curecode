@@ -1,0 +1,41 @@
+<% 
+	if none? validate/full [
+		uid		integer!	*
+		action	word!		*
+	][
+		force-validation request/content/uid
+	]
+	
+	title: say "Manage Users"
+	include %../head.rsp
+	page: 'users
+	include %links.rsp
+%>
+<br>
+<div align="center">
+	<% if not empty? list: enum-users [%>
+	<br><br>
+	<table class="tbl">
+		<tr>
+			<th width="40" class="center">#[ID]</th>
+			<th>#[Login]</th>
+			<th>#[Email]</th>
+			<th>#[Role]</th>
+			<th>#[Activation]</th>
+			<th>#[Created]</th>
+		</tr><%foreach [id login email reg-date role creation-date] list [%>
+		<tr>
+			<td class="center"><%=id%></td>
+			<td width="80">
+				<a href="user.rsp?id=<%=id%>"><%=login%></a>
+			</td>
+			<td><%=email%></td>
+			<td width="80"><%=say role%></td>
+			<td><%=either reg-date [prin reg-date][%>pending [<a href="users.rsp?action=validate&uid=<%=id%>">Validate</a>]<%]%></td>
+			<td><%=creation-date%></td>
+		</tr>
+		<%]%>
+	</table>
+	<%]%>
+</div>
+<%include-file %../footer.inc%>

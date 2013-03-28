@@ -1,0 +1,11 @@
+<%
+	if any [
+		validate/full [id integer! *]
+		empty? prj: get-project request/content/id
+		prj/3 = 1		;-- private
+	][
+		response/redirect request/web-app
+	]
+	session/content/project-id: request/content/id
+	response/redirect join request/web-app "/view-tickets.rsp"
+%>

@@ -1,0 +1,82 @@
+<% 
+	err?: denied?: reset-ok?: no
+	fLogin: fEmail: ""
+	
+	params: request/content
+	either "ok" = select params 'reset [
+		reset-ok?: yes
+	][
+		if all [
+			none? validate/full [action word! *]
+			'reset = params/action
+		][
+			either invalid: validate/full [
+				login	-		*
+				email	email! 	*
+			][
+				err?: yes
+			][
+				if not denied?: say any [
+					all [
+						not find params/email #"@"
+						"Invalid email address"
+					]
+					all [
+						"Unknown user" = res: check-user params
+						"These Login/Email don't match"
+					]
+				][
+					send-reset-URL params res/1
+					response/redirect "reset-pass.rsp?reset=ok"
+				]
+			]
+			fLogin: any [params/login fLogin]
+			fEmail: any [params/email fEmail]
+		]
+	]
+
+	title: say "Reset your Password"
+	include %head.rsp
+%>
+<%either reset-ok? [%>
+<div align="center">
+	<p>
+		#[An email has been sent with an confirmation URL].<br>
+		#[Once activated, you can freely log in here with your new password].
+	</p>
+</div>
+<%][%>
+<div align="center" style="padding-top:40px">
+	<form method="POST">
+		<%if err? [%>
+		<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
+		<%]%>
+		<%if denied? [%>
+			<font color="red"><b>#[Error]: <%=denied?%>!</b></font>
+		<%]%>
+		<table class="align-right">
+			<tr>
+				<th <% if err? [mark/error 'login] %>>#[User ID]</th>
+				<td>
+					<input type="text" name="login" value="<%=fLogin%>">
+				</td>
+			</tr>
+			<tr>
+				<th <% if err? [mark/error 'email] %>>#[Email]</th>
+				<td>
+					<input type="text" name="email" value="<%=fEmail%>">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<br>
+					<input type="submit" value="#[Reset Password]">
+				</td>
+			</tr>
+		</table>
+		<input type="hidden" name="action" value="reset">
+	</form>	
+</div>
+<%]%>
+<%include-file %footer.inc%>

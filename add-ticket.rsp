@@ -1,0 +1,131 @@
+<%
+	title: say "Add new ticket"
+	
+	if session/content/project-id = 1 [
+		include %head.rsp%>
+		<br><br>
+			<center>#[Please choose a project first!]</center>
+		<%
+		include-file %footer.inc
+		response/end
+	]
+	invalid: validate/full [
+		severity	integer!	*
+		priority	integer!	*
+		version		integer!	-
+		cat 		integer!	-
+		;reproduce	integer!	*
+		type		integer!	*
+		platform	integer!	*
+		summary		-			*
+		desc		-			*
+		code		-			-
+		action		word!		-
+	]
+
+	err?: no
+	if add-mode: request/content/action = 'add [
+		either invalid [err?: yes][
+			id: add-ticket request/content
+			if all [
+				list: session/content/files
+				not empty? list
+			][
+				foreach file list [add-file id file/1 file/2]
+				clear list
+			]
+			response/redirect join "ack-ticket.rsp?id=" id
+		]
+	]
+	param: request/content
+
+	include %head.rsp 
+%>
+<br>
+<div align="center">
+<%if all [add-mode invalid][%>
+	<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
+<%]%>
+<form method="POST" action="add-ticket.rsp" name="ticketfrm">
+<table class="tbl" style="margin-top:20px;">
+	<tr>
+		<th>#[Project]</td>
+		<td>
+			<%=select projects sess/project-id%>
+		</td>
+	</tr>
+	<tr>
+		<th <% if err? [mark/error 'type] %> align="right">#[Type]</td>
+		<td>
+			<select name="type"><%foreach [id label] enum-types [
+				%><option value="<%=id%>"<% mark/selected id 'type 1 %>><%=say label%></option>
+			<%]%></select>
+		</td>
+	</tr><tr>
+		<th <% if err? [mark/error 'platform] %> align="right">#[Platform]</td>
+		<td>
+			<select name="platform"><%foreach [id label] enum-platforms [
+				%><option value="<%=id%>"<% mark/selected id 'platform 1 %>><%=label%></option>
+			<%]%></select>
+		</td>
+	</tr><%if not empty? list: enum-categories [%>
+	<tr>
+		<th <% if err? [mark/error 'cat] %> align="right">#[Category]</td>
+		<td>
+			<select name="cat"><%foreach [id label] list [
+				%><option value="<%=id%>"<% mark/selected id 'cat 1 %>><%=label%></option>
+			<%]%></select>
+		</td>
+	</tr><%]
+		if not empty? list: enum-versions [%>
+	<tr>		
+		<th <% if err? [mark/error 'version] %> align="right">#[Version]</td>
+		<td>
+			<select name="version"><%foreach [id label] list [
+				%><option value="<%=id%>"<% mark/selected id 'version 1 %>><%=label%></option>
+			<%]%></select>
+		</td>
+	</tr><%]%><tr>
+		<th <% if err? [mark/error 'severity] %> align="right">#[Severity]</td>
+		<td>
+			<select name="severity"><%foreach [id label] skip enum-severities 2 [%>
+				<option value="<%=id%>"<% mark/selected id 'severity 5%>><%=say label%></option><%
+			]%></select>
+		</td>
+	</tr><tr>		
+		<th <% if err? [mark/error 'priority] %> align="right">#[Priority]</td>
+		<td>
+			<select name="priority"><%foreach [id label] enum-priorities [
+				%><option value="<%=id%>"<% mark/selected id 'priority 3%>><%=say label%></option>
+			<%]%></select>
+		</td>
+	</tr><tr>		
+		<th align="right">#[Summary]</td>
+		<td <% if err? [mark/error 'summary] %>>
+			<input name="summary" type="text" size="82" value="<%=any [param/summary ""]%>">
+		</td>
+	</tr><tr>
+		<th align="right">#[Description]</th>
+		<td <% if err? [mark/error 'desc] %>>
+			<textarea name="desc" cols="70" rows="8"><%=any [param/desc ""]%></textarea>
+		</td>
+	</tr><tr>		
+		<th align="right">#[Example code]</td>
+		<td><textarea name="code" cols="70" rows="8"><%=any [param/code ""]%></textarea></td>
+	</tr>
+</table>
+<input type="hidden" name="action" value="add">
+</form>
+</div>
+<div align="center" style="padding:0;margin-top:0">
+<%	
+	params: [id -1]
+	sess: session/content
+	allow-modify?: yes
+	width: 716
+	include %attached.rsp
+%>
+<br>
+<input type="button" value="#[Submit Ticket]" onClick="javascript:document.forms.ticketfrm.submit();">
+</div>
+<%include-file %footer.inc%>

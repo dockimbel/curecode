@@ -1,0 +1,4 @@
+<%
+	session/reset
+	response/redirect join request/web-app "/index.rsp"
+%>

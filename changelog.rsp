@@ -1,0 +1,53 @@
+<% 
+	title: say "Change Log"
+	
+	if session/content/project-id = 1 [
+		include %head.rsp%>
+		<br><center>#[Please choose a project first!]</center>
+		<%
+		include-file %footer.inc
+		response/end
+	]
+	
+	validate [vid -]
+	set [vid vlabel] any [
+		all [request/content/vid none]
+		parse dehex any [request/content/vid ""] ";"
+	]
+	if vid [attempt [vid: to integer! vid]]
+	request/content/vid: vid
+	include %head.rsp
+%>
+<div align="center" style="padding-top:20px;">
+	<form method="POST" id="selver">
+	#[Fixed tickets in version] : 
+	<%either empty? list-ver: enum-versions [%>
+		n/a
+		<input type="hidden" name="vid" value="0">
+	<%][%>
+	<select name="vid" onchange="document.forms.selver.submit();">
+		<%foreach [id label] list-ver [
+			if none? vid [set [vid vlabel] reduce [id label]]
+		%><option value="<%=rejoin [id #";" label]%>"<% mark/selected id 'vid 0%>><%=label%></option>
+		<%]%>
+	</select>
+	<%]%>
+	</form>
+<%if vid [%>	
+	<table class="changelog">
+	<tr><th colspan="2" align="left">#[Version] <%=vlabel%></th></tr><%
+	foreach ticket list-fixed-tickets vid [%>
+		<tr>
+			<td width="200">
+				<a href="<%=request/web-app%>/ticket.rsp?id=<%=ticket/1%>"><%=zeropad ticket/1 7%></a> : 
+				<%=ticket/2%>
+			</td><td>
+				<%=ticket/3%>
+			</td>
+		</tr>
+	<%]%>
+	</table>
+<%]%>
+</div>
+<%include-file %footer.inc%>
+

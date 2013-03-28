@@ -1,0 +1,20 @@
+<%
+	root: %public/files/
+	
+	if any [
+		validate/full [id - *]
+		not exists? file: join root [request/content/id %.att]
+	][
+		response/set-status 404
+		response/end
+	]
+	unless name: get-file-name id: join request/content/id %.att [
+		id: to-file id
+		foreach item session/content/files [
+			if item/2 = id [name: item/1 break]
+		]
+	]
+	
+	response/buffer: get-modes file 'full-path	
+	response/set-header 'Content-Disposition  rejoin [{filename="} name {"}]
+%>

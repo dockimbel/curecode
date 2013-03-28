@@ -1,0 +1,172 @@
+<%
+	attach-list: either negative? params/id [
+		any [session/content/files []]
+	][
+		list-files params/id
+	]
+
+	if any [
+		allow-modify?
+		not empty? attach-list 
+	][
+%>
+<div align="center" style="margin-top:20px;<%if all [value? 'width width][%>width:<%=width%>px<%]%>">
+<%if allow-modify? [%>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	<script type="text/javascript" src="js/ui.core.js"></script>
+	<script type="text/javascript" src="js/ui.draggable.js"></script>
+	<script type="text/javascript" src="js/ui.droppable.js"></script>
+	<script language="javascript" type="text/javascript">
+		var token;
+		var timer;
+		var factor;
+		var ref_time;
+		var ref_bytes;
+		
+		function getMilliSeconds(){
+			var d = new Date();
+			return d.getTime();
+		}
+		function getSpeed(bytes){
+			var unit;
+			var total = 0;
+
+			ref_bytes.shift();
+			ref_bytes.push(bytes);		
+			for (var i = 0; i < 3; i++) total += ref_bytes[i + 1] - ref_bytes[i];
+
+			var s = 250 * total / (getMilliSeconds() - ref_time); // 1000 * total / 4...
+			if (s < 1024) 
+				unit = '#[B/s]';
+			else {
+				if (s < 1048576) {
+					unit = '#[KB/s]';
+					s = Math.round(s / 1024);
+				} else {
+					unit = '#[MB/s]';
+					s = Math.round(s / 1048576);
+				};
+			};
+			ref_time = getMilliSeconds();
+			return String(s) + unit;
+		}
+		function setTrashcanState(){
+			timer = setTimeout(function() {
+				if ($('.attached-doc').length == 0)
+					$('#trashcan').fadeOut("slow");
+				else
+					$('#trashcan').fadeIn("slow");
+			}, 100);
+		}
+		function onDone(){
+			$.get('get-new-file.rsp?id=<%=params/id%>', function(data){
+				$('.hideable').hide();
+				$('#fakeinput').val('');
+				$('[name=file]').val('');
+				$('#up_bar').css('width', '0px');
+				$('#up_count').html('0%');
+				
+				$('#fileslist').append(data);
+				$('.attached-doc:last').draggable({helper: 'clone', opacity: 0.75});
+				$('.attached-doc:last').fadeIn("slow");
+				setTrashcanState();
+			}, "text");
+		}
+		function onTimer(){
+			$.getJSON('/upload/status/' + token, function (stats){
+				$('#up_bar').css('width', String(stats[0] * factor) + 'px');
+				$('#up_count').html(String(stats[0]) + '% #[at] ' + getSpeed(stats[1]));
+				if (stats[0] < 100)
+					timer = setTimeout(onTimer, 250);
+				else
+					timer = setTimeout(onDone, 300);
+			})
+		}
+		function getToken (){
+			if ($('[name=file]').val() == '') return false;
+			factor = $('#up_progress').css('width');
+			factor = parseInt(factor.slice(0,factor.length - 2)) / 100;
+			token = $.ajax({url: '/upload/get-id', async: false}).responseText;
+			$('#attfrm').attr('action', 'upload.rsp?id=<%=params/id%>&token=' + token);
+			$('.hideable').show();
+			timer = setTimeout(onTimer, 250);
+			ref_time = getMilliSeconds();
+			ref_bytes = new Array(0,0,0,0);
+			return true;
+		}
+		$(document).ready(function () {
+			$('.hideable').hide();
+			$('.attached-doc').draggable({helper: 'clone', opacity: 0.75});
+			$('#trashcan').droppable({
+				drop: function(event, ui) {
+					var name = $('#' + ui.draggable.attr('id') + ' img').attr('title');
+					if (confirm('#[Do you really want to delete file] [' + name + '] ?')) {
+						$.get('remove-file.rsp?id=<%=params/id%>&file=' + ui.draggable.attr('id'));
+						ui.draggable.empty();
+						ui.draggable.remove();
+						setTrashcanState();
+					}
+				}
+			});
+			if ($('.attached-doc').length == 0) $('#trashcan').hide();
+		});
+	</script>
+<%]%>
+	<table class="cmt">
+		<tr><th colspan="2" align="left"><a name="files">#[Attached Files]</a></th></tr>
+		<tr><%if allow-modify? [%>
+			<form method="POST" id="attfrm" enctype="multipart/form-data" target="fileframe">
+			<%]%>
+			<th align="center" width="120"></th>
+			<td>
+				<div id="fileslist"><%
+					foreach file attach-list [
+						small: join %public/files/ [file/2 %-small.png]
+						class: either exists? small [{class="withborder"}][
+							small: "img/document.png"
+							none
+						]
+						file-id: head clear find copy file/2 #"."
+					%>
+					<div class="attached-doc" id="<%=file-id%>">
+						<a href="get-file.rsp?id=<%=file-id%>&file=<%=url-encode/all file/1%>" target="_blank">
+							<img <%=any [class ""]%> src="<%=small%>" title="<%=html-encode file/1%>">
+						</a>
+					</div>
+					<%]%>
+				</div>
+				<%if allow-modify? [%>
+				<table class="noborder" width="100%">
+					<tr>
+						<td width="280">
+							<div class="fileinputs">
+								<input type="file" name="file" class="file" onChange="$('#fakeinput').val(this.value);">
+								<div class="fakefile">
+									<input id="fakeinput" class="fakeinput">
+									<input type="button" value="#[Select...]">
+								</div>
+							</div>
+						</td><td>
+							<input type="submit" value=" #[Attach] " onClick="getToken();" style="position:relative;top:3px">
+						</td><td>
+							<img align="right" id="trashcan" src="img/delete-doc.png" title="#[Drop a document here to delete it]">
+						</td>
+					</tr><tr>
+						<td colspan="2">
+							<div id="up_progress" class="hideable"><div id="up_bar"></div></div>
+							<span id="up_count" class="hideable">0 %</span>
+						</td>
+					</tr>
+				</table>
+				<%]%>
+			</td><%if allow-modify? [%>
+			<input type="hidden" name="mode" value="add-file">
+			</form>
+			<%]%>
+		</tr>
+	</table><%if allow-modify? [%>
+	<iframe style="display:none" src="about:blank" name="fileframe" ></iframe>
+	<%]%>
+</div>
+<%]%>
+<br>

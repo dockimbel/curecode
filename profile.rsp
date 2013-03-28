@@ -1,0 +1,102 @@
+<% 
+	changed?: saved?: no
+	params: request/content
+	user: get-user user-id: session/content/user-id
+	
+	if all [
+		none? validate/full [
+			action word! -
+			pass    - 	 *
+			pass2   - 	 *
+		]
+		params/action = 'change
+		params/pass = params/pass2
+	][
+		update-user-pass params
+		changed?: yes
+	]
+	
+	if params/action = 'save-defs [
+		update-user-defaults
+		saved?: yes
+	]
+
+	title: say "Your Profile"
+	include %head.rsp
+%>
+<br><br>
+<div align="center">
+	<table class="tbl">
+		<tr>
+			<th>#[Login ID]</th>
+			<td><%=any [user/1 ""]%></td>
+		</tr><tr>
+			<th>#[Email]</th>
+			<td><%=any [user/2 ""]%></td>
+		</tr>
+		<tr>
+			<th>#[Role]</th>
+			<td><%=any [user/4 ""]%></td>
+		</tr>
+		<tr>
+			<th>#[Creation Date]</th>
+			<td><%=any [user/5 ""]%></td>
+		</tr>
+	</table>
+	<form method="POST">
+	<table style="margin-top:20px;">
+		<tr>
+			<th>#[New Password]</th>
+			<td><input type="password" name="pass" value=""></td>			
+		</tr><tr>
+			<th>#[Confirmation]</th>
+			<td><input type="password" name="pass2" value=""></td>
+		</tr><tr>
+			<td colspan="2" align="right">
+			<%if changed? [%><font color="red">#[Password changed!]</font><%]%>
+			<input type="submit" value="#[Change]">
+			<input type="hidden" name="action" value="change">
+			</td>
+		</tr>
+	</table>
+	</form>
+	<form method="POST">
+		<table style="margin-top:40px;">
+			<tr>
+				<td colspan="2" align="right">
+				<%either saved? [%><font color="red">#[Default project and filters saved!]</font><%][%>
+				<input type="submit" value="#[Set current project and filters as default]">
+				<input type="hidden" name="action" value="save-defs">
+				<%]%>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+<br>
+<%if not empty? projects: enum-projects/priv [%>
+<div align="center">
+	<h4>#[Private Projects Rights]</h4>
+	<form method="POST">
+	<table class="tbl" width="300">
+		<tr>
+			<th>#[Private Project Name]</th>
+			<th>#[Your Role]</th>
+		</tr>
+		<% either empty? list: get-rights user-id [%>
+			<tr><td colspan="2" align="center">#[no rights granted]</td></tr>
+		<%][
+				foreach right list [%>
+		<tr>
+			<td><%=any [right/3 ""]%></td>
+			<td><%=say any [right/4 ""]%></td>
+		</tr>
+				<%]
+		]%>
+	</table>
+	<input type="hidden" name="id" value="<%=user-id%>">
+	</form>
+</div>
+<%]%>
+<%include-file %footer.inc%>
+

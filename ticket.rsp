@@ -1,0 +1,119 @@
+<%
+	go-away: [response/end] ;[response/redirect "view-tickets.rsp"]
+	
+	if any [
+		validate/full [id integer! *]
+		empty? ticket: get-ticket request/content/id
+	] go-away
+	
+	if session/content/project-id = 1 [
+		if all [
+			session/content/user-id
+			access-project? ticket/17 session/content/user-id
+		][
+			response/redirect request/web-app
+		]
+		session/content/project-id: ticket/17
+	]
+	
+	if any [		
+		ticket/17 <> session/content/project-id		;-- project changed while the ticket is displayed
+		all [
+			ticket/16 = 1					;-- private project
+			session/content/user-role <> 'admin
+			any [
+				session/content/user-role = 'viewer ;-- ko for unknown users
+				not access-project? ticket/17 session/content/user-id ;-- ko if no rights
+			]
+		]
+	] go-away
+
+	params: request/content
+	id: params/id
+
+	title: rejoin [say "Ticket" " #" zeropad id 7]
+	include %head.rsp
+	
+	edit?: no
+	include %navigate-tickets.rsp
+%>
+<%if ins: select request/config/locals 'short [
+	id: params/id%>
+<div style="position:absolute;top:130px;left:5%;padding-left:12px;text-align:right;">
+	#[Short URL]: <a href="http://issue.cc/<%=ins%>/<%=id%>">http://issue.cc/<%=ins%>/<%=id%></a>
+</div>
+<%]%>
+<div style="position:absolute;top:132px;right:5%;padding-right:12px;text-align:right;">
+	<a href="feed.rsp?tid=<%=id%>"><img src="img/rss.gif" border="0"></a><br>
+</div>
+<div align="center" style="margin-top:10px;">
+	<table width="90%" class="tbl">
+		<tr>
+			<th width="120">#[Type]</th><td width="80" ><%=say ticket/9%></td>
+			<th>#[Status]</th><td class="bg<%=ticket/19%>"><%=say ticket/6%></td>
+			<th>#[Date]</th><td><%=ticket/11/date%> <%=form-time ticket/11/time%></td>
+		</tr><tr>
+			<th>#[Version]</th><td><%=ticket/4%></td>
+			<th>#[Category]</th><td><%=ticket/14%></td>	
+			<th>#[Submitted by]</th><td><%=ticket/13%></td>
+		</tr><tr>
+			<th>#[Platform]</th><td><%=say ticket/10%></td>
+			<th>#[Severity]</th><td width="80" class="mark-<%= pick ["high" "low"] ticket/18 > 5%>"><%=say ticket/5%></td>
+			<th>#[Priority]</th><td><%=say ticket/8%></td>
+		</tr>
+	</table><br>
+	<table width="90%" class="tbl">	
+		<tr>
+			<th valign="top" width="120" class="sum">#[Summary]</th>
+			<td valign="top" class="sum"><%=html-encode ticket/1%></td>
+		</tr><tr>
+			<th valign="top">#[Description]</th>
+			<td valign="top" height="150">
+				<%=activate-links pre-encode html-encode ticket/2%>
+			</td>
+		</tr><tr>
+			<th valign="top">#[Example code]</th>
+			<td valign="top"  height="50">
+			<pre style="font-size:1.1em"><%=any [all [ticket/3 html-encode ticket/3] ""]%></pre>
+			</td>
+		</tr>
+	</table><br>
+	<table width="90%" class="tbl">
+		<tr>
+			<th width="120">#[Assigned to]</th><td width="80">n/a</td>
+			<th width="120">#[Fixed in]</th><td width="80"><%=any [all [integer? ticket/20 "-"] ticket/20]%></td>
+			<th width="120">#[Last Update]</th><td><%=ticket/12/date%> <%=form-time ticket/12/time%></td>
+		</tr>
+	</table>
+	<%either any [
+		find [admin developer] session/content/user-role 
+		all [
+			session/content/user-role <> 'viewer
+			any [
+				all [
+					session/content/user-name = ticket/13		; ok for ticket submitter
+					ticket/19 <> 6								; if status <> dismissed
+				]
+				find [admin developer] access-level? ticket/17 session/content/user-id ; ok if rights granted for this project
+			]
+		]
+	  ][%>
+	<br>
+	<form action="edit-ticket.rsp">
+		<input type="submit" value=" #[Edit Ticket] ">
+		<input type="hidden" name="id" value="<%=id%>">
+		<%if cid: select params 'cursor [%><input type="hidden" name="cursor" value="<%=cid%>"><%]%>
+	</form>
+	<%][%>
+		<br>
+	<%]%>
+</div>	
+<%
+	allow-modify?: no
+	width: none
+	include %attached.rsp
+	add-cmt: session/content/user-role <> 'viewer
+	include %comments.rsp
+	include %history.rsp
+%>
+<%include-file %footer.inc%>

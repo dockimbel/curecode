@@ -1,0 +1,204 @@
+<% 
+	err?: denied?: registered?: no
+	
+	if not value? 'recaptcha [
+		recaptcha: load join request/config/root-dir [
+			%/private/instances/
+			request/config/locals/instance
+			%recaptcha.keys
+		]
+	]
+		
+	params: request/content
+	either "ok" = select params 'reg [
+		registered?: yes
+	][
+		if all [
+			none? validate/full [action word! *]
+			params/action = 'register
+		][
+			either invalid: validate/full [
+				login	-	   *
+				email	email! *			
+				pass	- 	   *
+				pass2	- 	   *
+				recaptcha_challenge_field - *
+				recaptcha_response_field  - *
+			][
+				err?: yes
+			][
+				if not denied?: say any [
+					all [
+						params/pass <> params/pass2
+						"Both passwords don't match"
+					]
+					all [
+						"Unknown user" <> identify-user params
+						"This Login ID already exists, please choose another"
+					]
+					all [
+						not find params/email #"@"
+						"Invalid email address"
+					]
+					all [
+						not recaptcha-verify params
+						"Wrong Captcha code, please try again"
+					]
+				][
+					vkey: make-vkey
+					add-user params vkey
+					send-confirmation params vkey
+					response/redirect "register.rsp?reg=ok"
+				]
+			]
+		]
+		if params/action = 'identify [
+			either invalid: validate/full [
+				instance -	   *
+				login	-	   *
+				pass	- 	   *
+			][
+				err?: yes
+			][
+				if not denied?: say any [
+					all [
+						none? src-url: get-instance-db params/instance
+						"Unknown instance name"
+					]
+					all [
+						exists-user? params/login
+						"Account already in use, cannot import"
+					]
+					all [
+						not block? res: identify-remote-user src-url params
+						res
+					]
+				][
+					import-user res
+					response/forward join request/web-app "/index.rsp"
+				]
+			]
+		]
+	]
+
+	title: say "Register new account"
+	include %head.rsp
+%>
+<%either registered? [%>
+<div align="center">
+	<p>
+		#[Your account has been created.]<br><br>
+		#[An email has been sent with an activation URL.]<br>
+		#[Once activated, you can freely log in here.]
+	</p>
+</div>
+<%][%>
+<div align="center" style="padding-top:40px;padding-left:5%;padding-right:5%;width:90%">
+	<div style="float:left;width:45%;">
+		<h2>#[Import an exiting account]</h2>
+		<div style="text-align:left;margin-bottom:12px;width:280px;">
+#[If you already have a Curecode account, you can import your account
+instead of creating a new one. You just need to sign in using the instance name
+of your current account (http://curecode.org/&lt;instance name&gt;).]
+		</div>
+		<form method="POST">
+			<%
+			 import?: params/action = 'identify
+			  if all [err? import?][%>
+			<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
+			<%]%>
+			<%if all [denied? import?][%>
+				<font color="red"><b>#[Error]: <%=denied?%>!</b></font>
+			<%]%>
+			<table class="align-right">
+				<tr>
+					<th <%if all [err? import?][mark/error 'instance] %>>#[Instance name]</th>
+					<td>
+						<input type="text" name="instance" value="<%=all [import? select params 'instance]%>">
+					</td>
+				</tr>
+				<tr>
+					<th <%if all [err? import?][mark/error 'login] %>>#[User ID]</th>
+					<td>
+						<input type="text" name="login" value="<%=all [import? select params 'login]%>">
+					</td>
+				</tr>
+				<tr>
+					<th <%if all [err? import?][mark/error 'pass] %>>#[Password]</th>
+					<td>
+						<input type="password" name="pass" value="<%=all [import? select params 'pass]%>">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="submit" value="#[Import & Login]" style="margin-top:30px;">
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="action" value="identify">
+		</form>	
+	</div>
+	<div style="float:left;width:45%;">
+		<h2>#[Create a new account]</h2>
+		<form method="POST">
+			<%
+				register?: params/action = 'register
+			  if all [err? register?][%>
+			<font color="red"><b>#[Error: Missing fields or incorrect values]</b></font>
+			<%]%>
+			<%if all [denied? register?][%>
+				<font color="red"><b>#[Error]: <%=denied?%>!</b></font>
+			<%]%>
+			<table class="align-right">
+				<tr>
+					<th <% if all [register? err?][mark/error 'login] %>>#[User ID]</th>
+					<td>
+						<input type="text" name="login" value="<%=all [register? select params 'login]%>">
+					</td>
+				</tr>
+				<tr>
+					<th <% if all [register? err?][mark/error 'email] %>>#[Email]</th>
+					<td>
+						<input type="text" name="email" value="<%=all [register? select params 'email]%>">
+					</td>
+				</tr>
+				<tr>
+					<th <% if all [register? err?][mark/error 'pass] %>>#[Password]</th>
+					<td>
+						<input type="password" name="pass" value="<%=all [register? select params 'pass]%>">
+					</td>
+				</tr>
+				<tr>
+					<th <% if all [register? err?][mark/error 'pass2] %>>#[Confirm Password]</th>
+					<td>
+						<input type="password" name="pass2" value="<%=all [register? select params 'pass2]%>">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+					<br>
+					<script>
+						var RecaptchaOptions = {
+						  theme : 'white',
+						  lang : 'fr'
+						};
+					</script>
+					<script type="text/javascript"
+					   src="http://api.recaptcha.net/challenge?k=<%=recaptcha/public-key%>">
+					</script>
+					<br><br>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="submit" value="#[Register]">
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="action" value="register">
+		</form>	
+	</div>
+</div>
+<div style="clear: left;"></div>
+<%]%>
+<%include-file %footer.inc%>
