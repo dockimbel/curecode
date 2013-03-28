@@ -5,13 +5,11 @@ REBOL [
 	Version: 1.0
 ]
 
-mysql-prot: none
-
 print "CureCode Installation Script..."
 
 if not find first system/schemes 'MySQL [
-	print "...loading MySQL protocol from http://sidl.fr/mysql-protocol.r"
-	do as-string mysql-prot: read/binary http://sidl.fr/mysql-protocol.r
+	print "...loading MySQL protocol"
+	do %mysql-protocol.r
 ]
 print "...checking server status"
 unless attempt [close open/no-wait/direct tcp://localhost:3306 true][
@@ -39,36 +37,6 @@ send-sql db replace/all {
 print "...creating tables"
 send-sql db read %build-db.sql
 close db
-
-print "...installing mysql-protocol.r"
-mysql?: ask "...do you have mysql-protocol.r already installed? (ENTER=no): "
-if any [empty? mysql? not parse mysql? ["y" | "yes"]][
-	if not mysql-prot [
-		print "...downloading http://sidl.fr/mysql-protocol.r"
-		mysql-prot: read/binary http://sidl.fr/mysql-protocol.r
-	]
-	until [
-		path: ask "...where to save mysql-protocol.r? "
-		if path/1 = #"%" [remove path]
-		all [
-			path: attempt [to-rebol-file trim path]
-			any [
-				attempt [write/binary path/mysql-protocol.r mysql-prot true]
-				all [print "*** writing file failed!" none]
-			]
-		]
-	]
-	msg: {
-Please add the following config directive to your %httpd.cfg into the GLOBAL section:
-
-	worker-libs [
-		$PATH$
-	]
-	
-}
-	replace msg "$PATH$" mold path/mysql-protocol.r
-	print msg
-]
 
 msg: {
 Please add the following webapp definition to your %httpd.cfg file in the domain

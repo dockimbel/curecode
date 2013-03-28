@@ -6,7 +6,6 @@
 	prj-id: 	any [prj?: request/content/prj 1]
 	ticket-id:  request/content/tid
 	host: request/parsed/headers/host
-	
 %><?xml version="1.0"?>
 <rss version="2.0">
 <channel><%
