@@ -61,7 +61,7 @@ activate-links: func [data [string!] /local s e link][
 				] e
 				s: skip s length? link
 			) :s
-			| s: "http://" some not-ws e: (
+			| s: ["http" opt "s"] "://" some not-ws e: (
 				change/part s link: rejoin [
 					{<a href="} link: copy/part s e {">}
 					link 
