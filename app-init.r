@@ -26,7 +26,7 @@ on-session-start: has [list][
 		preset		"search"
 		filter		2
 		text		#[none]
-		fields		1
+		fields		2
 		tid			#[none]
 		type		0
 		severity	0

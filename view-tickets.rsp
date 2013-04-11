@@ -124,13 +124,13 @@
 						<td><input type="text" name="text" value="<%=any [params/text ""]%>" size="30"></td>
 						<td>
 							<select name="fields">
-								<option value="1" <%mark/selected 1 'fields 1%>>&lt;#[All]&gt;</option>
-								<option value="2" <%mark/selected 2 'fields 1%>>#[Summary]</option>
-								<option value="3" <%mark/selected 3 'fields 1%>>#[Description]</option>
-								<option value="4" <%mark/selected 4 'fields 1%>>#[Comments]</option>
-								<option value="5" <%mark/selected 5 'fields 1%>>#[User]</option>
+								<option value="2" <%mark/selected 2 'fields 2%>>#[Summary]</option>
+								<option value="3" <%mark/selected 3 'fields 2%>>#[Description]</option>
+								<option value="4" <%mark/selected 4 'fields 2%>>#[Comments]</option>
+								<option value="5" <%mark/selected 5 'fields 2%>>#[User]</option>
+								<option value="1" <%mark/selected 1 'fields 2%>>&lt;#[All]&gt; (slow)</option>
 								<option disabled>----------</option>
-								<option value="6" <%mark/selected 6 'fields 1%>>#[Commented by]</option>
+								<option value="6" <%mark/selected 6 'fields 2%>>#[Commented by]</option>
 							</select>
 						</td>
 						<td style="padding-left:8px">#[or]</td>
