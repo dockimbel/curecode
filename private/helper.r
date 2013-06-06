@@ -295,7 +295,7 @@ apply-filter: func [spec [block!] /local filter][
 		[status  9 orderby  8]				;-- Tested
 		[orderby 8]							;-- Recent Changes
 		[hstatus [6 8 9 10] orderby  4]		;-- Worst Severity
-		[orderby -10]							;-- By Submitter
+		[orderby -10]						;-- By Submitter
 		[status  10 orderby -1]				;-- Completed
 	] spec/filter
 	
@@ -307,12 +307,12 @@ apply-filter: func [spec [block!] /local filter][
 recaptcha-verify: func [spec [block!] /local data res][
 	data: rejoin [
 		"privatekey=" 		recaptcha/private-key
-		"&amp;remoteip="	request/client-ip
-		"&amp;challenge="	spec/recaptcha_challenge_field
-		"&&amp;response="	spec/recaptcha_response_field
+		"&remoteip="	request/client-ip
+		"&challenge="	spec/recaptcha_challenge_field
+		"&response="	spec/recaptcha_response_field
 	]
 	res: attempt [
-		read/custom http://api-verify.recaptcha.net/verify reduce ['POST data]
+		read/custom http://www.google.com/recaptcha/api/verify reduce ['POST data]
 	]
 	to logic! all [res find/part res "true" 4]
 ]

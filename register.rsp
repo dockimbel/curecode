@@ -184,7 +184,7 @@ of your current account (http://curecode.org/&lt;instance name&gt;).]
 						};
 					</script>
 					<script type="text/javascript"
-					   src="http://api.recaptcha.net/challenge?k=<%=recaptcha/public-key%>">
+					   src="http://www.google.com/recaptcha/api/challenge?k=<%=recaptcha/public-key%>">
 					</script>
 					<br><br>
 					</td>
